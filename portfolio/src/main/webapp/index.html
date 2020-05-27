@@ -1,18 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
+  <html>
+<head>
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-  </head>
+    </head>
   <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+    <nav>
+        <ul>
+            <li><a href="index.html">My Portfolio</a></li>
+            <li class="active"><a href="index.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="experiences.html">Past Experiences</a></li>
+            <li><a href="hobbies.html">Hobbies</a></li>
+        </ul>
+    </nav>
+    <div id="container">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h1>Welcome to my Portfolio!</h1>
+                    <div class="container">
+                        <a href="images/profile.jpg"><img class="image" src="images/profile.jpg"/></a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <p>First of all, welcome to my portfolio! I am Jenny Sheng, a rising 
+                        Junior at Princeton University studying computer science and minoring 
+                        in statistics and machine learning.
+                        Ever since high school, I've been interested in computer science, 
+                        and as I branch out more through my undergraduate coursework, I find 
+                        myself becoming more and more eager to learn about the different aspects 
+                        of computer science. This includes the theoretical aspects and the different 
+                        applications of computer science. </p>
+                </div>
+            </div>
+        </div>
     </div>
   </body>
 </html>
