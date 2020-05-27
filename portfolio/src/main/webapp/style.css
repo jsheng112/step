@@ -19,7 +19,8 @@ img {
 #image-display {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
+  width: 30%;
 }
 
 ul {
@@ -56,6 +57,50 @@ body {
     color: #595959
 }
 
-#gallery {
-    max-width: 30%;
+#selectedImg {
+    width: 100%;
+}
+
+.image-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  float: left;
+  width: 30%;
+}
+
+.image-thumbnails img {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.expanded {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  float: left;
+  margin-right: 20px;
+  margin-left: 20px;
+  width: 60%;
+}
+
+.experience {
+  background-color: #f2f2f2;
+  padding: 10px;
+  margin: 10px;
+}
+
+.left {
+  float: left;
+  width: 20%;
+  
+}
+.right {
+  float: left;
+  width: 80%;
+}
+
+.blog-post {
+  max-height: 80px;
+  overflow: hidden;
 }

@@ -12,17 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+/** display an expanded version of the selected image in the right */
+function expandImage(img) {
+  const imgUrl = img.src;
+  const imgElement = document.getElementById('selectedImg');
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  imgElement.src = imgUrl;
+  imgElement.parentElement.style.display = "block";
+}
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+/** Adds a random fact to the index page */
+function randomizeFacts() {
+    const facts = ["I once knew how to ride a bike when I was little but now somehow I have forgotten how to ride a bike!", 
+    "I have been drawing and painting for almost 13 years by now.", 
+    "I have really good focus and sometimes can paint/study/do anything for hours on end without getting distracted.", 
+    "I have wanted a dog for so many years now but I do not think this is going to happen anytime soon.", 
+    "I have recently been very interested in UI design. In fact, check out my latest UI design at tigertickets.herokuapp.com"];
+
+    // Pick a random fact.
+    const randomFact = facts[Math.floor(Math.random() * facts.length)];
+
+    // Add it to the page.
+    const factContainer = document.getElementById('random-fact');
+    factContainer.innerText = randomFact;
+
+}
+
+/** Expands the seelected post to show the full content */
+function expandPost(post) {
+    const content = post.innerHTML;
+    // document.write(content);
+
+    /** Display the content in the right panel */
+    fullPost = document.getElementById("full-post");
+    fullPost.innerHTML=content;
 }
