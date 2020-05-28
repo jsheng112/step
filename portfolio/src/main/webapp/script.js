@@ -38,7 +38,7 @@ function randomizeFacts() {
 
 }
 
-/** Expands the seelected post to show the full content */
+/** Expands the selected post to show the full content */
 function expandPost(post) {
     const content = post.innerHTML;
     // document.write(content);
