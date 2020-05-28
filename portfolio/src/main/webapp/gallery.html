@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    </head>
+  <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">My Portfolio</a></li>
+            <li><a href="index.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="experiences.html">Work Experiences</a></li>
+            <li class="active"><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+        </ul>
+    </nav>
+    <div id="container">
+        <div class="container-fluid">
+            <div class="row">   
+                <h1>Image Gallery</h1>
+                <div class="image-thumbnails">
+                    <img src="images/js1.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js2.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js3.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js4.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js5.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js6.jpg" onclick="expandImage(this)"/>
+                    <img src="images/js7.jpg" onclick="expandImage(this)"/>
+                </div>   
+                <!-- container for expanded image -->    
+                <div class="expanded">
+                    <img id="selectedImg" src="images/js1.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
