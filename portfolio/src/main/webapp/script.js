@@ -41,7 +41,6 @@ function randomizeFacts() {
 /** Expands the selected post to show the full content */
 function expandPost(post) {
     const content = post.innerHTML;
-    // document.write(content);
 
     /** Display the content in the right panel */
     fullPost = document.getElementById("full-post");

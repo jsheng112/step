@@ -4,6 +4,10 @@
   width: 80%;
 }
 
+div.row {
+  margin-bottom: 2em;
+}
+
 img {
     width: 50%;
 }
