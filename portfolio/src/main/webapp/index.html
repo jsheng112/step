@@ -20,15 +20,13 @@
     <div id="container">
         <div class="container-fluid">
             <div class="row">
-                <div class="col">
-                    <h1>Welcome to my Portfolio!</h1>
+                <h1>Welcome to my Portfolio!</h1>
+                <div class="col intro">
                     <div class="container">
-                        <a href="images/profile.jpg"><img class="image" src="images/profile.jpg"/></a>
+                        <a href="images/profile.jpg"><img class="image profile" src="images/profile.jpg"/></a>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
+                <div class="col intro">
                     <p>Welcome to my portfolio! I am Jenny Sheng, a rising 
                         Junior at Princeton University studying computer science and minoring 
                         in statistics and machine learning.
@@ -38,6 +36,17 @@
                         of computer science. This includes the theoretical aspects and the different 
                         applications of computer science. Browse through my website to learn more
                         about me! </p>
+                </div> 
+                <div class="col intro">
+                    <p> Click below to select a background color of your choice (if inputing manually please enter a hex value in the format "#------" and press enter): </p>
+                    <input type="text" id="hex" onkeydown="colorPicker()"></input>
+                    <input type="color" id="color" onclick="colorPicker()"></input>
+                    <button class="button" onclick="restoreDefaultColor()">Click here to restore the default background color</button>
+
+                    <p> Click below to select a text color of your choice (if inputing manually please enter a hex value in the format "#------" and press enter): </p>
+                    <input type="text" id="hex-text" onkeydown="colorPickerText()"></input>
+                    <input type="color" id="color-text" onclick="colorPickerText()"></input>
+                    <button class="button" onclick="restoreDefaultTextColor()">Click here to restore the default text color</button>
                 </div> 
             </div>
         </div>
