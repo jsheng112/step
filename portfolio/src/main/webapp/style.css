@@ -10,6 +10,7 @@ div.row {
 
 img {
     width: 50%;
+    height: auto;
 }
 
 .col{
@@ -88,11 +89,12 @@ body {
   background-color: #f2f2f2;
   padding: 10px;
   margin: 10px;
+  border-radius: 10px;
 }
 
 .left {
   float: left;
-  width: 20%;
+  width: 18%;
   
 }
 .right {
@@ -101,6 +103,28 @@ body {
 }
 
 .blog-post {
-  max-height: 80px;
+  max-height: 90px;
   overflow: hidden;
+}
+
+.button {
+  background-color: #d9d9d9;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 1em;
+}
+
+.image-blog {
+  float: left;
+  width: 30%;
+}
+
+.image-blog img {
+  width: 100%;
+  height: auto;
 }
