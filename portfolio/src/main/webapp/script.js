@@ -57,6 +57,8 @@ function colorPicker() {
     if(event.key === 'Enter') {
         document.body.style.backgroundColor = hex.value;
         color.value = hex.value;
+        /** store color in local storage */
+        localStorage.setItem("bgColor", hex.value);
     }
 
     /** eventlistener for selection of color in the color palette */
@@ -64,6 +66,7 @@ function colorPicker() {
         const colorVal = color.value;
         hex.value = colorVal;
         document.body.style.backgroundColor = colorVal;
+        localStorage.setItem("bgColor", colorVal);
     })
 }
 
@@ -77,6 +80,8 @@ function colorPickerText() {
     if(event.key === 'Enter') {
         document.body.style.color = hex.value;
         color.value = hex.value;
+        /** store color in local storage */
+        localStorage.setItem("textColor", hex.value);
     }
 
      /** eventlistener for selection of color in the color palette */
@@ -84,15 +89,24 @@ function colorPickerText() {
         const colorVal = color.value;
         hex.value = colorVal;
         document.body.style.color = colorVal;
+        localStorage.setItem("textColor", colorVal);
     })
 }
 
 /** restores default background color */
 function restoreDefaultColor() {
     document.body.style.backgroundColor = "#ffffff";
+    localStorage.setItem("bgColor", "#ffffff");
 }
 
 /** restores default text color */
 function restoreDefaultTextColor() {
     document.body.style.color = "#595959";
+    localStorage.setItem("textColor", "#595959");
+}
+
+/** sets the background and text color according to the previously chosen colors */
+function setColor() {
+    document.body.style.backgroundColor = localStorage.getItem("bgColor");
+    document.body.style.color = localStorage.getItem("textColor");
 }
