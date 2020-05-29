@@ -13,7 +13,7 @@ img {
     height: auto;
 }
 
-.col{
+.col {
     max-width: 800px;
 }
 
@@ -141,10 +141,37 @@ body {
   padding: 15px;
 }
 
-#color {
+#color, #color-text {
   margin-bottom: 1em;
 }
 
-#color-text {
-  margin-bottom: 1em;
+/* Style inputs, select elements and textareas */
+.contact, select, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* Style the label to display next to the inputs */
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.input-contact {
+    width: 100%;
+}
+
+.container-contact {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    max-width: 950px;
+}
+
+.submit {
+    text-align: center;
 }

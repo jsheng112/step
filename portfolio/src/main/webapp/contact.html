@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    </head>
+  <body onload="setColor()">
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="experiences.html">Work Experiences</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li class="active"><a href="contact.html">Contact Me</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+    <div class="container-contact">
+        <div class="container-fluid">
+            <h1>Let's get in Touch!</h1>
+            <div class="row experience">
+                <form>
+                    <div class="row">
+                        <div class="col">
+                            <label>First Name</label>
+                        </div>
+                        <div class="input-contact">
+                            <input class="contact" type="text" name="firstname" placeholder="Your name..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Last Name</label>
+                        </div>
+                        <div class="input-contact">
+                            <input class="contact" type="text" name="lastname" placeholder="Your last name..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Your Email</label>
+                        </div>
+                        <div class="input-contact">
+                            <input class="contact" type="text" name="email" placeholder="Your email..">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Subject</label>
+                        </div>
+                        <div class="input-contact">
+                            <textarea name="subject" placeholder="Write something.."></textarea>
+                        </div>
+                    </div>
+                    <div class="row submit">
+                        <input class="button submit" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

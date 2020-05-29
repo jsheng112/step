@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body onload="setColor()">
+    <nav>
+        <ul>
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="experiences.html">Work Experiences</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="contact.html">Contact Me</a></li>
+            <li class="active"><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+    <div class="container-contact">
+        <div class="container-fluid">
+            <h1>Settings</h1>
+            <div class="row">
+                <div class="col">
+                    <p> Click below to select a background color of your choice (if inputing manually please enter a hex value in the format "#------" and press enter): </p>
+                    <input type="text" id="hex" onkeydown="colorPicker()"></input>
+                    <input type="color" id="color" onclick="colorPicker()"></input>
+                    <button class="button" onclick="restoreDefaultColor()">Click here to restore the default background color</button>
+
+                    <p> Click below to select a text color of your choice (if inputing manually please enter a hex value in the format "#------" and press enter): </p>
+                    <input type="text" id="hex-text" onkeydown="colorPickerText()"></input>
+                    <input type="color" id="color-text" onclick="colorPickerText()"></input>
+                    <button class="button" onclick="restoreDefaultTextColor()">Click here to restore the default text color</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

@@ -97,12 +97,20 @@ function colorPickerText() {
 function restoreDefaultColor() {
     document.body.style.backgroundColor = "#ffffff";
     localStorage.setItem("bgColor", "#ffffff");
+    const hex = document.querySelector("#hex");
+    const color = document.querySelector("#color");
+    hex.value = "#ffffff";
+    color.value = "#ffffff";
 }
 
 /** restores default text color */
 function restoreDefaultTextColor() {
     document.body.style.color = "#595959";
     localStorage.setItem("textColor", "#595959");
+    const hex = document.querySelector("#hex-text");
+    const color = document.querySelector("#color-text");
+    hex.value = "#595959";
+    color.value = "#595959";
 }
 
 /** sets the background and text color according to the previously chosen colors */
