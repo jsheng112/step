@@ -13,10 +13,6 @@ img {
     height: auto;
 }
 
-.col{
-    max-width: 800px;
-}
-
 #image-display {
   display: flex;
   flex-wrap: wrap;
@@ -84,11 +80,15 @@ body {
   width: 60%;
 }
 
-.experience {
+.panel {
   background-color: #f2f2f2;
   padding: 10px;
   margin: 10px;
   border-radius: 10px;
+  width: 80%;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .left {
@@ -107,7 +107,7 @@ body {
 }
 
 .button {
-  background-color: #d9d9d9;
+  background-color: #bfbfbf;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -141,10 +141,37 @@ body {
   padding: 15px;
 }
 
-#color {
+#color, #color-text {
   margin-bottom: 1em;
 }
 
-#color-text {
-  margin-bottom: 1em;
+/* Style inputs, select elements and textareas */
+.contact, select, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* Style the label to display next to the inputs */
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.input-contact {
+    width: 100%;
+}
+
+.container-contact {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    max-width: 950px;
+}
+
+.submit {
+    text-align: center;
 }
