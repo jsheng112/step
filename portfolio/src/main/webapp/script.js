@@ -46,3 +46,67 @@ function expandPost(post) {
     fullPost = document.getElementById("full-post");
     fullPost.innerHTML=content;
 }
+
+/**Changes the background color of index.html according to
+color picked by user */
+function colorPicker() {
+    const hex = document.querySelector("#hex");
+    const color = document.querySelector("#color");
+
+    /** upon detecting the enter key, set the background color to the input */
+    if(event.key === 'Enter') {
+        document.body.style.backgroundColor = hex.value;
+        color.value = hex.value;
+        /** store color in local storage */
+        localStorage.setItem("bgColor", hex.value);
+    }
+
+    /** eventlistener for selection of color in the color palette */
+    color.addEventListener("input", ()=>{
+        const colorVal = color.value;
+        hex.value = colorVal;
+        document.body.style.backgroundColor = colorVal;
+        localStorage.setItem("bgColor", colorVal);
+    })
+}
+
+/**Changes the background color of index.html according to
+color picked by user */
+function colorPickerText() {
+    const hex = document.querySelector("#hex-text");
+    const color = document.querySelector("#color-text");
+
+    /** upon detecting the enter key, set the background color to the input */
+    if(event.key === 'Enter') {
+        document.body.style.color = hex.value;
+        color.value = hex.value;
+        /** store color in local storage */
+        localStorage.setItem("textColor", hex.value);
+    }
+
+     /** eventlistener for selection of color in the color palette */
+    color.addEventListener("input", ()=>{
+        const colorVal = color.value;
+        hex.value = colorVal;
+        document.body.style.color = colorVal;
+        localStorage.setItem("textColor", colorVal);
+    })
+}
+
+/** restores default background color */
+function restoreDefaultColor() {
+    document.body.style.backgroundColor = "#ffffff";
+    localStorage.setItem("bgColor", "#ffffff");
+}
+
+/** restores default text color */
+function restoreDefaultTextColor() {
+    document.body.style.color = "#595959";
+    localStorage.setItem("textColor", "#595959");
+}
+
+/** sets the background and text color according to the previously chosen colors */
+function setColor() {
+    document.body.style.backgroundColor = localStorage.getItem("bgColor");
+    document.body.style.color = localStorage.getItem("textColor");
+}
