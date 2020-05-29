@@ -115,6 +115,21 @@ function restoreDefaultTextColor() {
 
 /** sets the background and text color according to the previously chosen colors */
 function setColor() {
-    document.body.style.backgroundColor = localStorage.getItem("bgColor");
-    document.body.style.color = localStorage.getItem("textColor");
+    /** sets background color and values in the fields */
+    const hex = document.querySelector("#hex");
+    const color = document.querySelector("#color");
+    const localColor = localStorage.getItem("bgColor");
+
+    hex.value = localColor;
+    color.value = localColor;
+    document.body.style.backgroundColor = localColor;
+
+    /** sets text color and value in the fields */
+    const hexText = document.querySelector("#hex-text");
+    const colorText = document.querySelector("#color-text");
+    const localTextColor = localStorage.getItem("textColor");
+    
+    hexText.value = localTextColor;
+    colorText.value = localTextColor;
+    document.body.style.color = localTextColor;
 }
