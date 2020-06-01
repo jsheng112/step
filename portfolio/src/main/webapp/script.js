@@ -154,7 +154,7 @@ function setColor() {
     document.body.style.color = localStorage.getItem("textColor");
 }
 
-
+/** gets comment data from server */
 function getData() {
   fetch('/data').then(response => response.text()).then((data) => {
     document.getElementById('data-container').innerHTML = data;
