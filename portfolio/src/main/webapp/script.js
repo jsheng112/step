@@ -155,7 +155,7 @@ function setColor() {
 }
  
 /**
- * Fetches stats from the servers and adds them to the DOM.
+ * Fetches hard-coded json from the server and adds them to the DOM.
  */
 function getData() {
   fetch('/data').then(response => response.json()).then((data) => {
@@ -169,7 +169,7 @@ function getData() {
   });
 }
  
-/** Creates an <li> element containing text. */
+/** Creates a <div> element containing text. */
 function createDivElement(text) {
   const divElement = document.createElement('div');
   divElement.setAttribute("class", "panel");
