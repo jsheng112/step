@@ -154,25 +154,31 @@ function setColor() {
 }
  
 /**
- * Fetches hard-coded json from the server and adds them to the DOM.
+ * Fetch comments from the server and adds them to the DOM.
  */
 function getData() {
   fetch('data').then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
-      commentDivElement.appendChild(
-      createDivElement(data[i] + "\n"));
+        commentDivElement.appendChild(
+        createDivElement(data[i]));
     }
   });
 }
  
 /** Creates a <div> element containing text. */
-function createDivElement(text) {
+function createDivElement(comment) {
   const divElement = document.createElement('div');
   divElement.setAttribute("class", "panel");
+ 
   const pElement = document.createElement('p');
-  pElement.innerText = text;
+  pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
+ 
+  const pElementDate = document.createElement('p');
+  pElementDate.innerText = comment.date;
+  divElement.appendChild(pElementDate);
   return divElement;
 }
+
