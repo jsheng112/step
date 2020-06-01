@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
  
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
+@WebServlet("data")
 public class DataServlet extends HttpServlet {
  
   @Override

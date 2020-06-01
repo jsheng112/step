@@ -157,7 +157,7 @@ function setColor() {
  * Fetches hard-coded json from the server and adds them to the DOM.
  */
 function getData() {
-  fetch('/data').then(response => response.json()).then((data) => {
+  fetch('data').then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
