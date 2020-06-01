@@ -153,3 +153,11 @@ function setColor() {
     document.body.style.backgroundColor = localStorage.getItem("bgColor");
     document.body.style.color = localStorage.getItem("textColor");
 }
+
+
+function getData() {
+  fetch('/data').then(response => response.text()).then((data) => {
+    document.getElementById('data-container').innerHTML = data;
+  });
+}
+
