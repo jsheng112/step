@@ -113,23 +113,43 @@ function restoreDefaultTextColor() {
     color.value = "#595959";
 }
 
-/** sets the background and text color according to the previously chosen colors */
-function setColor() {
+/** sets the background and text color for the settings page*/
+function setColorSettings() {
     /** sets background color and values in the fields */
     const hex = document.querySelector("#hex");
     const color = document.querySelector("#color");
-    const localColor = localStorage.getItem("bgColor");
-
-    hex.value = localColor;
-    color.value = localColor;
-    document.body.style.backgroundColor = localColor;
+    var localColor = localStorage.getItem("bgColor");
+    if (localColor == null) {
+        hex.value = "#ffffff";
+        color.value = "#ffffff";
+        document.body.style.backgroundColor = "#ffffff";
+    }
+    else {
+        hex.value = localColor;
+        color.value = localColor;
+        document.body.style.backgroundColor = localColor;
+    }
+    
 
     /** sets text color and value in the fields */
     const hexText = document.querySelector("#hex-text");
     const colorText = document.querySelector("#color-text");
-    const localTextColor = localStorage.getItem("textColor");
+    var localTextColor = localStorage.getItem("textColor");
+    if (localTextColor == null) {
+        hexText.value = "#595959";
+        colorText.value = "#595959";
+        document.body.style.color = "#595959";
+    }
+    else {
+        hexText.value = localTextColor;
+        colorText.value = localTextColor;
+        document.body.style.color = localTextColor;
+    }
     
-    hexText.value = localTextColor;
-    colorText.value = localTextColor;
-    document.body.style.color = localTextColor;
+}
+
+/** sets the background and text color according to the previously chosen colors */
+function setColor() {
+    document.body.style.backgroundColor = localStorage.getItem("bgColor");
+    document.body.style.color = localStorage.getItem("textColor");
 }
