@@ -34,28 +34,32 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public class DataServlet extends HttpServlet {
 
   private class Comment {
-      private String comment;
-      private Date date;
+      private String comment; /** content of the comment */
+      private Date date; /** timestamp for comment */
+      private String name; /** name of the poster */
  
-      public Comment(String content, Date d) {
+      public Comment(String content, Date d, String n) {
           comment = content;
           date = d;
+          name = n;
       }
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Send the JSON as the response
+    // create query
     Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    // get each result from datastore and generate comments 
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for (Entity entity : results.asIterable()) {
       String content = (String) entity.getProperty("content");
       Date time = (Date) entity.getProperty("time");
+      String name = (String) entity.getProperty("name");
 
-      Comment comment = new Comment(content, time);
+      Comment comment = new Comment(content, time, name);
       comments.add(comment);
     }
 
@@ -68,25 +72,24 @@ public class DataServlet extends HttpServlet {
  
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // get parameters andcreate a new entity
     String content = request.getParameter("comment");
+    String name = request.getParameter("name");
     Date currentTime = new Date();
+
     Entity newComment =  new Entity("Comment");
     newComment.setProperty("content", content);
     newComment.setProperty("time", currentTime);
+    newComment.setProperty("name", name);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(newComment);
 
     response.sendRedirect("comments.html");
-    // // Send the JSON as the response
-    // String json = convertToJson(comments);
-    // response.setContentType("application/json;");
-    // response.getWriter().println(json);
   }
  
   /**
-   * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
-   * the Gson library dependency to pom.xml.
+   * Converts an ArrayList instance into a JSON string using the Gson library. 
    */
   private String convertToJson(ArrayList<Comment> comments) {
     Gson gson = new Gson();

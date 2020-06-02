@@ -172,6 +172,10 @@ function createDivElement(comment) {
   const divElement = document.createElement('div');
   divElement.setAttribute("class", "panel");
  
+  const pElementName = document.createElement('p');
+  pElementName.innerText = comment.name;
+  divElement.appendChild(pElementName);
+
   const pElement = document.createElement('p');
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
