@@ -156,7 +156,7 @@ body {
 }
 
 /* Style the label to display next to the inputs */
-label {
+.col label {
   padding: 12px 12px 12px 0;
   display: inline-block;
 }
@@ -178,4 +178,9 @@ label {
 
 form input{
   margin-top: 1em;
+}
+
+.label {
+  padding: 12px 0 0 0;
+  display: inline-block;
 }
