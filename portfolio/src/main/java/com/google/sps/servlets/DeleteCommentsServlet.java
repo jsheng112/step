@@ -31,7 +31,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
  
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that deletes all comments in datastore */
 @WebServlet("delete-data")
 public class DeleteCommentsServlet extends HttpServlet {
 
@@ -41,12 +41,12 @@ public class DeleteCommentsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    // get each result from datastore and generate comments 
+    // get each result from datastore and delete comments 
     for (Entity entity : results.asIterable()) {
       Key taskEntityKey = entity.getKey();
       datastore.delete(taskEntityKey);
     }
-    // Send the JSON as the response
+    // Send an empty JSON as the response
     response.setContentType("application/json;");
     String json = convertToJson(new ArrayList<String>());
     response.getWriter().println();

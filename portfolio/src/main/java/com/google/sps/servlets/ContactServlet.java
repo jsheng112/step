@@ -29,13 +29,13 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
  
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that stores the contact information and messages*/
 @WebServlet("contact-me")
 public class ContactServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // get parameters andcreate a new entity
+    // get parameters and create a new Email entity
     String firstName = request.getParameter("firstname");
     String lastName = request.getParameter("lastname");
     String email = request.getParameter("email");

@@ -156,7 +156,7 @@ function setColor() {
 /**
  * Fetch comments from the server and adds them to the DOM.
  */
-function getData() {
+function getComment() {
   const num = document.getElementById("quantity").value;
   fetch('data?num='+num).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
@@ -187,11 +187,16 @@ function createDivElement(comment) {
   return divElement;
 }
 
+/** deletes all posts upon clicking the button */
 function deletePosts() {
+    // create and send a POST request for deleting data
     const request = new Request('delete-data', {method: 'POST'});
+
+    // after POST returns response, create a GET request to get the data again
+    // which returns 0 comments
     fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
-    console.log(data);
+    
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
         commentDivElement.appendChild(
