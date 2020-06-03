@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();getPostComments();">
+<body onload="setColor();getPostComments(4);">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -27,7 +27,7 @@
                 <h1>Welcome to my Blog!</h1>
                 <div class="left">
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments();">
+                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(4);">
                             <h4>May 18th, 2020</h4>
                             <h4>First Day at Google</h4>
                             <p>Today is my first day as a Google STEP intern! I am so excited to start this internship 
@@ -39,11 +39,10 @@
                                 rite of passage into software engineering professionalism. I am excited to share this journey with my podmates, 
                                 and place trust and confidence in each other as we strive together to write quality software. I hope that our
                                 capstone final project will be one that makes a difference in the world.</p>
-                            <p id="postID" hidden>4</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(3);">
                             <h4>May 12th, 2020</h4>
                             <h4>TigerTickets</h4>
                             <p>Today at 5:00pm EST, our TigerTickets team handed in our final web application for the semester. 
@@ -70,11 +69,10 @@
                             <div class="image-blog">
                                 <img src="images/project.jpg"/>
                             </div>
-                            <p id="postID" hidden>3</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(2);">
                             <h4>December 7, 2019</h4>
                             <h4>IgniteSTEM xPrinceton</h4>
                             <p>Today is the day of the IgniteSTEM xPrinceton Conference. I got up at 5:30am in the morning in 
@@ -97,11 +95,10 @@
                             <div class="image-blog">
                                 <img src="images/js10.jpg"/>
                             </div> 
-                            <p id="postID" hidden>2</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(1);">
                             <h4>June 23th, 2019</h4>
                             <h4>First Day at Tezign</h4>
                             <p>Hi everyone! I’m Jenny, a freshman computer science major, and this is my first blog post! This summer 
@@ -126,7 +123,6 @@
                                 <p>I arrived a week before they were about to move location. Tezign is at max capacity and about to 
                                     move to a newer, bigger location. But even though this would mean that I would have a longer 
                                     commute, I look forward to spending the rest of my summer at Tezign. </p>
-                                <p id="postID" hidden>1</p>
                         </div>
                     </div>
                 </div>
@@ -143,7 +139,6 @@
                             rite of passage into software engineering professionalism. I am excited to share this journey with my podmates, 
                             and place trust and confidence in each other as we strive together to write quality software. I hope that our
                             capstone final project will be one that makes a difference in the world.</p>
-                        <p id="postID" hidden>4</p>
                     </div>
                     <div class="right-post-panel post-comments" id="comment-container">
                         <h4>Leave your Comments Below</h4>
@@ -156,8 +151,8 @@
                             <input class="button" type="submit" />
                         </form>
                         <label id="quantity-label" for="quantity">Number of comments shown (-1 means that all comments are shown below):</label>
-                        <input type="number" id="quantity" name="quantity" min="-1" value="-1" />
-                        <button class="button" id="delete-button" type="submit" onclick="deletePosts();">Delete All Comments</button>
+                        <input type="number" id="quantity" name="quantity" min="-1" value="-1" onchange="getPostComments(4);"/>
+                        <button class="button" id="delete-button" type="submit" onclick="deleteBlogComments();">Delete All Comments</button>
                         <div id="data-container"></div>
                     </div>
                 </div>

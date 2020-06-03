@@ -47,10 +47,10 @@ function expandPost(post) {
   fullPost.innerHTML=content;
 }
 
-function getPostComments() {
+function getPostComments(id) {
   /** get the comments for this specific blog post */
   const num = document.getElementById("quantity").value;
-  fetch('blog-comment?num=' + num).then(response => response.json()).then((data) => {
+  fetch('blog-comment?num=' + num + "&id=" + id).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
@@ -58,10 +58,25 @@ function getPostComments() {
         createDivElement(data[i]));
     }
   });
+  idInput = document.getElementById("id");
+  idInput.value = id;
 }
-function getId(){
-    const id = fullPost.getElementById("postID").value;
-    return id;
+
+function deleteBlogComments(id) {
+  // create and send a POST request for deleting data
+    const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
+
+    // after POST returns response, create a GET request to get the data again
+    // which returns 0 comments
+    fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+        commentDivElement.appendChild(
+        createDivElement(data[i]));
+    }
+  });
 }
  
 /**Changes the background color of index.html according to
