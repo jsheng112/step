@@ -31,18 +31,20 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
  
-/** Servlet that deletes all comments in datastore */
+/** Servlet that deletes all blog comments for a specific blog post in datastore */
 @WebServlet("delete-blog-comments")
-public class DeleteCommentsServlet extends HttpServlet {
+public class DeleteBlogCommentsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int id = request.getParameter("id");
+    // id of the post that we are deleting all comments from
+    int id = Integer.parseInt(request.getParameter("id"));
+    
     Query query = new Query("PostComment").addSort("time", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    // get each result from datastore and delete comments 
+    // get each result from datastore and delete comments if that comment has the specific id
     for (Entity entity : results.asIterable()) {
       long postId = (long) entity.getProperty("postid");
       if (postId != id)
@@ -50,6 +52,7 @@ public class DeleteCommentsServlet extends HttpServlet {
       Key taskEntityKey = entity.getKey();
       datastore.delete(taskEntityKey);
     }
+    
     // Send an empty JSON as the response
     response.setContentType("application/json;");
     String json = convertToJson(new ArrayList<String>());

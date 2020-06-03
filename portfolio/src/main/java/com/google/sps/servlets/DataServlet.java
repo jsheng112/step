@@ -47,7 +47,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int num = Integer.parseInt(request.getParameter("num"));
+    int num = Integer.parseInt(request.getParameter("num")); // number of comments to return
 
     // create query
     Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
@@ -58,6 +58,7 @@ public class DataServlet extends HttpServlet {
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int counter = 0;
     for (Entity entity : results.asIterable()) {
+      // -1 means that we want all comments returned
       if (counter < num || num == -1) {
         String content = (String) entity.getProperty("content");
         Date time = (Date) entity.getProperty("time");

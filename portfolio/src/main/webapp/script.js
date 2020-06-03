@@ -47,34 +47,39 @@ function expandPost(post) {
   fullPost.innerHTML=content;
 }
 
+/** get all the comments under a specific blog post.
+Each blog post is identifiable by a unique id (starting
+from 1 being the id of the oldest post) */
 function getPostComments(id) {
-  /** get the comments for this specific blog post */
   const num = document.getElementById("quantity").value;
+
+  /** get the comments for this specific blog post */
   fetch('blog-comment?num=' + num + "&id=" + id).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
-        commentDivElement.appendChild(
-        createDivElement(data[i]));
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
     }
   });
   idInput = document.getElementById("id");
   idInput.value = id;
 }
 
+/** deletes all comments from blog post with the specific id */
 function deleteBlogComments(id) {
   // create and send a POST request for deleting data
-    const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
+  const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
 
-    // after POST returns response, create a GET request to get the data again
-    // which returns 0 comments
-    fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
-        commentDivElement.appendChild(
-        createDivElement(data[i]));
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
     }
   });
 }
@@ -194,8 +199,8 @@ function getComment() {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
-        commentDivElement.appendChild(
-            createDivElement(data[i]));
+      commentDivElement.appendChild(
+        createDivElement(data[i]));
     }
   });
 }
@@ -221,18 +226,18 @@ function createDivElement(comment) {
 
 /** deletes all posts upon clicking the button */
 function deletePosts() {
-    // create and send a POST request for deleting data
-    const request = new Request('delete-data', {method: 'POST'});
-
-    // after POST returns response, create a GET request to get the data again
-    // which returns 0 comments
-    fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+  // create and send a POST request for deleting data
+  const request = new Request('delete-data', {method: 'POST'});
+  
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
-        commentDivElement.appendChild(
-        createDivElement(data[i]));
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
     }
   });
 }

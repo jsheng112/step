@@ -33,7 +33,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("blog-comment")
 public class BlogCommentServlet extends HttpServlet {
 
-  private class PostComment {
+  private static class PostComment {
       private String comment; /** content of the comment */
       private Date date; /** timestamp for comment */
       private String name; /** name of the poster */
@@ -49,8 +49,8 @@ public class BlogCommentServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int num = Integer.parseInt(request.getParameter("num"));
-    int id = Integer.parseInt(request.getParameter("id"));
+    int num = Integer.parseInt(request.getParameter("num")); // the number of comments we want
+    int id = Integer.parseInt(request.getParameter("id")); // the id of the specific post
 
     // create query
     Query query = new Query("PostComment").addSort("time", SortDirection.DESCENDING);
@@ -60,17 +60,21 @@ public class BlogCommentServlet extends HttpServlet {
     // get each result from datastore and generate comments 
     ArrayList<PostComment> comments = new ArrayList<PostComment>();
     int counter = 0;
+    
     for (Entity entity : results.asIterable()) {
+      // -1 means that we want all comments
       if (counter < num || num == -1) {
         String content = (String) entity.getProperty("content");
         Date time = (Date) entity.getProperty("time");
         String name = (String) entity.getProperty("name");
         long postId = (Long) entity.getProperty("postid");
+
         if (postId != id)
           continue;
 
         PostComment comment = new PostComment(content, time, name, postId);
         comments.add(comment);
+        
         if (num != -1) {
           counter++;
         }
@@ -87,7 +91,7 @@ public class BlogCommentServlet extends HttpServlet {
  
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // get parameters andcreate a new entity
+    // get parameters and create a new entity
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
