@@ -24,84 +24,37 @@ import java.util.Date;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
  
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("data")
-public class DataServlet extends HttpServlet {
-
-  private static class Comment {
-      private String comment; /* content of the comment */
-      private Date date; /* timestamp for comment */
-      private String name; /* name of the poster */
- 
-      public Comment(String content, Date d, String n) {
-          comment = content;
-          date = d;
-          name = n;
-      }
-  }
+@WebServlet("delete-data")
+public class DeleteCommentsServlet extends HttpServlet {
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int num = Integer.parseInt(request.getParameter("num"));
-
-    // create query
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     // get each result from datastore and generate comments 
-    ArrayList<Comment> comments = new ArrayList<Comment>();
-    int counter = 0;
     for (Entity entity : results.asIterable()) {
-      if (counter < num || num == -1) {
-        String content = (String) entity.getProperty("content");
-        Date time = (Date) entity.getProperty("time");
-        String name = (String) entity.getProperty("name");
-
-        Comment comment = new Comment(content, time, name);
-        comments.add(comment);
-        if (num != -1) {
-          counter++;
-        }
-      } else {
-          break;
-      }
+      Key taskEntityKey = entity.getKey();
+      datastore.delete(taskEntityKey);
     }
-
     // Send the JSON as the response
-    String json = convertToJson(comments);
     response.setContentType("application/json;");
-    response.getWriter().println(json);
-
+    String json = convertToJson(new ArrayList<String>());
+    response.getWriter().println();
   }
- 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // get parameters andcreate a new entity
-    String content = request.getParameter("comment");
-    String name = request.getParameter("name");
-    Date currentTime = new Date();
-
-    Entity newComment =  new Entity("Comment");
-    newComment.setProperty("content", content);
-    newComment.setProperty("time", currentTime);
-    newComment.setProperty("name", name);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(newComment);
-
-    response.sendRedirect("comments.html");
-  }
- 
   /**
    * Converts an ArrayList instance into a JSON string using the Gson library. 
    */
-  private String convertToJson(ArrayList<Comment> comments) {
+  private String convertToJson(ArrayList<String> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;

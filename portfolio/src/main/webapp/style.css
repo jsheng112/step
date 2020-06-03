@@ -93,11 +93,11 @@ body {
 
 .left {
   float: left;
-  width: 18%;
+  width: 20%;
   
 }
 .right {
-  float: left;
+  float: right;
   width: 80%;
 }
 
@@ -156,7 +156,7 @@ body {
 }
 
 /* Style the label to display next to the inputs */
-.col label {
+.col label, #quantity-label {
   padding: 12px 12px 12px 0;
   display: inline-block;
 }
@@ -183,4 +183,42 @@ form input{
 .label {
   padding: 12px 0 0 0;
   display: inline-block;
+}
+
+#delete-button {
+  float: right;
+}
+
+.right-post-panel {
+  float: right;
+  width: 100%;
+}
+
+.post-panel {
+  background-color: #f2f2f2;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-comments { 
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Use a media query to add a breakpoint at 800px: */
+@media screen and (max-width: 800px) {
+  .blog-post {
+    display: inline-flex; /* The width is 100%, when the viewport is 800px or smaller */
+    width: 25%;
+  }
 }

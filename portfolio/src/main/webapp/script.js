@@ -157,7 +157,8 @@ function setColor() {
  * Fetch comments from the server and adds them to the DOM.
  */
 function getData() {
-  fetch('data').then(response => response.json()).then((data) => {
+  const num = document.getElementById("quantity").value;
+  fetch('data?num='+num).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
@@ -186,3 +187,15 @@ function createDivElement(comment) {
   return divElement;
 }
 
+function deletePosts() {
+    const request = new Request('delete-data', {method: 'POST'});
+    fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+    console.log(data);
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+        commentDivElement.appendChild(
+        createDivElement(data[i]));
+    }
+  });
+}
