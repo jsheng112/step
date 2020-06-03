@@ -46,6 +46,23 @@ function expandPost(post) {
   fullPost = document.getElementById("full-post");
   fullPost.innerHTML=content;
 }
+
+function getPostComments() {
+  /** get the comments for this specific blog post */
+  const num = document.getElementById("quantity").value;
+  fetch('blog-comment?num=' + num).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+        commentDivElement.appendChild(
+        createDivElement(data[i]));
+    }
+  });
+}
+function getId(){
+    const id = fullPost.getElementById("postID").value;
+    return id;
+}
  
 /**Changes the background color of index.html according to
 color picked by user */
@@ -196,7 +213,7 @@ function deletePosts() {
     // which returns 0 comments
     fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
-    
+
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
         commentDivElement.appendChild(
