@@ -162,7 +162,7 @@ function getData() {
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
         commentDivElement.appendChild(
-        createDivElement(data[i]));
+            createDivElement(data[i]));
     }
   });
 }
