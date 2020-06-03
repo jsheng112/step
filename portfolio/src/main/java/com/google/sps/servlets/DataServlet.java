@@ -33,10 +33,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("data")
 public class DataServlet extends HttpServlet {
 
-  private class Comment {
-      private String comment; /** content of the comment */
-      private Date date; /** timestamp for comment */
-      private String name; /** name of the poster */
+  private static class Comment {
+      private String comment; /* content of the comment */
+      private Date date; /* timestamp for comment */
+      private String name; /* name of the poster */
  
       public Comment(String content, Date d, String n) {
           comment = content;
