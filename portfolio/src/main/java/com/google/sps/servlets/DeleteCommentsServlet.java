@@ -41,15 +41,16 @@ public class DeleteCommentsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    int count = 0;
     // get each result from datastore and delete comments 
     for (Entity entity : results.asIterable()) {
       Key taskEntityKey = entity.getKey();
       datastore.delete(taskEntityKey);
+      count++;
     }
-    // Send an empty JSON as the response
+    // Send the number of comments deleted as the response
     response.setContentType("application/json;");
-    String json = convertToJson(new ArrayList<String>());
-    response.getWriter().println();
+    response.getWriter().println(count);
   }
   /**
    * Converts an ArrayList instance into a JSON string using the Gson library. 

@@ -38,6 +38,8 @@ function randomizeFacts() {
  
 }
 
+/** when first loading the page, either load the latest
+post or the post last clicked on */
 function loadPosts() {
   postId = localStorage.getItem("postid");
   if (postId == null) {
@@ -57,7 +59,10 @@ function expandPost(post, id) {
   fullPost = document.getElementById("full-post");
   fullPost.innerHTML=content;
 
+  /** set the last seen post to this one */
   localStorage.setItem("postid", id);
+
+  /** show border only on the expanded post */
   for (var i = 1; i <= 4; i++) {
     if (i != id)
       document.getElementById("post" + i).style.borderStyle = "none";
