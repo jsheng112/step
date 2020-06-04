@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();getPostComments(4);">
+<body onload="setColor();loadPosts();">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -27,7 +27,7 @@
                 <h1>Welcome to my Blog!</h1>
                 <div class="left">
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(4);">
+                        <div class="col panel blog-post" id="post4" onclick="expandPost(this, 4);setId(4);getPostComments();">
                             <h4>May 18th, 2020</h4>
                             <h4>First Day at Google</h4>
                             <p>Today is my first day as a Google STEP intern! I am so excited to start this internship 
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(3);">
+                        <div class="col panel blog-post" id="post3" onclick="expandPost(this, 3);setId(3);getPostComments();">
                             <h4>May 12th, 2020</h4>
                             <h4>TigerTickets</h4>
                             <p>Today at 5:00pm EST, our TigerTickets team handed in our final web application for the semester. 
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(2);">
+                        <div class="col panel blog-post" id="post2" onclick="expandPost(this, 2);setId(2);getPostComments();">
                             <h4>December 7, 2019</h4>
                             <h4>IgniteSTEM xPrinceton</h4>
                             <p>Today is the day of the IgniteSTEM xPrinceton Conference. I got up at 5:30am in the morning in 
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this);getPostComments(1);">
+                        <div class="col panel blog-post" id="post1" onclick="expandPost(this, 1);setId(1);getPostComments();">
                             <h4>June 23th, 2019</h4>
                             <h4>First Day at Tezign</h4>
                             <p>Hi everyone! I’m Jenny, a freshman computer science major, and this is my first blog post! This summer 
@@ -151,8 +151,8 @@
                             <input class="button" type="submit" />
                         </form>
                         <label id="quantity-label" for="quantity">Number of comments shown (-1 means that all comments are shown below):</label>
-                        <input type="number" id="quantity" name="quantity" min="-1" value="-1" onchange="getPostComments(4);"/>
-                        <button class="button" id="delete-button" type="submit" onclick="deleteBlogComments(4);">Delete All Comments</button>
+                        <input type="number" id="quantity" name="quantity" min="-1" value="-1" onchange="getPostComments();"/>
+                        <button class="button" id="delete-button" type="submit" onclick="deleteBlogComments();">Delete All Comments</button>
                         <div id="data-container"></div>
                     </div>
                 </div>

@@ -26,6 +26,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -39,16 +42,17 @@ public class DeleteBlogCommentsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // id of the post that we are deleting all comments from
     int id = Integer.parseInt(request.getParameter("id"));
+
+    // create filter
+    Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
     
-    Query query = new Query("PostComment").addSort("time", SortDirection.DESCENDING);
+    Query query = new Query("PostComment").setFilter(keyFilter).addSort("time", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     // get each result from datastore and delete comments if that comment has the specific id
     for (Entity entity : results.asIterable()) {
       long postId = (long) entity.getProperty("postid");
-      if (postId != id)
-        continue;
       Key taskEntityKey = entity.getKey();
       datastore.delete(taskEntityKey);
     }

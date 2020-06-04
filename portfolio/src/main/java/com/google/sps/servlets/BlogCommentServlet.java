@@ -24,11 +24,14 @@ import java.util.Date;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
- 
+
 /** Servlet that returns comments under the respective blog posts*/
 @WebServlet("blog-comment")
 public class BlogCommentServlet extends HttpServlet {
@@ -52,11 +55,14 @@ public class BlogCommentServlet extends HttpServlet {
     int num = Integer.parseInt(request.getParameter("num")); // the number of comments we want
     int id = Integer.parseInt(request.getParameter("id")); // the id of the specific post
 
-    // create query
-    Query query = new Query("PostComment").addSort("time", SortDirection.DESCENDING);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    // create filter
+    Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
 
+    // create query
+    Query query = new Query("PostComment").setFilter(keyFilter).addSort("time", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    PreparedQuery results = datastore.prepare(query);
     // get each result from datastore and generate comments 
     ArrayList<PostComment> comments = new ArrayList<PostComment>();
     int counter = 0;
@@ -69,9 +75,6 @@ public class BlogCommentServlet extends HttpServlet {
         String name = (String) entity.getProperty("name");
         long postId = (Long) entity.getProperty("postid");
 
-        if (postId != id)
-          continue;
-
         PostComment comment = new PostComment(content, time, name, postId);
         comments.add(comment);
         
@@ -79,7 +82,7 @@ public class BlogCommentServlet extends HttpServlet {
           counter++;
         }
       } else {
-          break;
+        break;
       }
     }
     // Send the JSON as the response

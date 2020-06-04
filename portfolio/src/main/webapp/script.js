@@ -37,22 +37,46 @@ function randomizeFacts() {
   factContainer.innerText = randomFact;
  
 }
+
+function loadPosts() {
+  postId = localStorage.getItem("postid");
+  if (postId == null) {
+    document.getElementById("post4").click();
+    setId(4);
+  } else {
+    document.getElementById("post" + postId).click();
+    setId(postId);
+  }
+}
  
 /** Expands the selected post to show the full content */
-function expandPost(post) {
+function expandPost(post, id) {
   const content = post.innerHTML;
  
   /** Display the content in the right panel */
   fullPost = document.getElementById("full-post");
   fullPost.innerHTML=content;
+
+  localStorage.setItem("postid", id);
+  for (var i = 1; i <= 4; i++) {
+    if (i != id)
+      document.getElementById("post" + i).style.borderStyle = "none";
+  }
+  post.style.borderStyle = "solid";
+}
+
+/** sets the id of the selected blog post */
+function setId(id) {
+  idInput = document.getElementById("id");
+  idInput.value = id;
 }
 
 /** get all the comments under a specific blog post.
 Each blog post is identifiable by a unique id (starting
 from 1 being the id of the oldest post) */
-function getPostComments(id) {
+function getPostComments() {
   const num = document.getElementById("quantity").value;
-
+  const id = document.getElementById("id").value;
   /** get the comments for this specific blog post */
   fetch('blog-comment?num=' + num + "&id=" + id).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
@@ -62,15 +86,13 @@ function getPostComments(id) {
       createDivElement(data[i]));
     }
   });
-  idInput = document.getElementById("id");
-  idInput.value = id;
 }
 
 /** deletes all comments from blog post with the specific id */
-function deleteBlogComments(id) {
+function deleteBlogComments() {
   // create and send a POST request for deleting data
+  const id = document.getElementById("id").value;
   const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
-
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
   fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
