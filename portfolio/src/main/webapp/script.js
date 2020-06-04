@@ -248,9 +248,31 @@ function createDivElement(comment) {
   const pElementDate = document.createElement('p');
   pElementDate.innerText = comment.date;
   divElement.appendChild(pElementDate);
+
+  const button = document.createElement('button');
+  button.innerText = "Delete this comment";
+  button.addEventListener("click", (button) => deleteSpecificComment(comment.id));
+  divElement.appendChild(button);
   return divElement;
 }
 
+function deleteSpecificComment(commentId) {
+  // create and send a POST request for deleting data
+  const request = new Request('delete-data?id=' + commentId, {method: 'POST'});
+  const num = document.getElementById("quantity").value;
+  
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  fetch(request).then(response => fetch('data?num=' + num)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
+    }
+  });
+}
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data

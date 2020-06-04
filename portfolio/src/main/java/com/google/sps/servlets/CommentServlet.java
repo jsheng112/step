@@ -25,46 +25,32 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
+import java.util.List;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
-public class DataServlet extends HttpServlet {
-
-  private static class Comment {
-      private String comment; /* content of the comment */
-      private Date date; /* timestamp for comment */
-      private String name; /* name of the poster */
- 
-      public Comment(String content, Date d, String n) {
-          comment = content;
-          date = d;
-          name = n;
-      }
-  }
+public class CommentServlet extends HttpServlet {
+  private CommentService service = new CommentService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int num = Integer.parseInt(request.getParameter("num")); // number of comments to return
 
-    // create query
-    Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-
-    // get each result from datastore and generate comments 
+    List<Entity> results = service.findAllComments();
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int counter = 0;
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results) {
       // -1 means that we want all comments returned
       if (counter < num || num == -1) {
         String content = (String) entity.getProperty("content");
         Date time = (Date) entity.getProperty("time");
         String name = (String) entity.getProperty("name");
+        long id = entity.getKey().getId();
 
-        Comment comment = new Comment(content, time, name);
+        Comment comment = new Comment(content, time, name, 0, id);
         comments.add(comment);
         if (num != -1) {
           counter++;
@@ -87,14 +73,7 @@ public class DataServlet extends HttpServlet {
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
-
-    Entity newComment =  new Entity("Comment");
-    newComment.setProperty("content", content);
-    newComment.setProperty("time", currentTime);
-    newComment.setProperty("name", name);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(newComment);
+    service.createNewComment(content, name, currentTime);
 
     response.sendRedirect("comments.html");
   }

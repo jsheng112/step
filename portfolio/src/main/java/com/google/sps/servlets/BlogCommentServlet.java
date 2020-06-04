@@ -36,20 +36,6 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("blog-comment")
 public class BlogCommentServlet extends HttpServlet {
 
-  private static class PostComment {
-      private String comment; /** content of the comment */
-      private Date date; /** timestamp for comment */
-      private String name; /** name of the poster */
-      private long postId; /** id of the post that it is under */
- 
-      public PostComment(String content, Date d, String n, long p) {
-          comment = content;
-          date = d;
-          name = n;
-          postId = p;
-      }
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int num = Integer.parseInt(request.getParameter("num")); // the number of comments we want
@@ -64,7 +50,7 @@ public class BlogCommentServlet extends HttpServlet {
 
     PreparedQuery results = datastore.prepare(query);
     // get each result from datastore and generate comments 
-    ArrayList<PostComment> comments = new ArrayList<PostComment>();
+    ArrayList<Comment> comments = new ArrayList<Comment>();
     int counter = 0;
     
     for (Entity entity : results.asIterable()) {
@@ -74,8 +60,9 @@ public class BlogCommentServlet extends HttpServlet {
         Date time = (Date) entity.getProperty("time");
         String name = (String) entity.getProperty("name");
         long postId = (Long) entity.getProperty("postid");
+        long commentId = (Long)entity.getKey().getId();
 
-        PostComment comment = new PostComment(content, time, name, postId);
+        Comment comment = new Comment(content, time, name, postId, commentId);
         comments.add(comment);
         
         if (num != -1) {
@@ -115,7 +102,7 @@ public class BlogCommentServlet extends HttpServlet {
   /**
    * Converts an ArrayList instance into a JSON string using the Gson library. 
    */
-  private String convertToJson(ArrayList<PostComment> comments) {
+  private String convertToJson(ArrayList<Comment> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
