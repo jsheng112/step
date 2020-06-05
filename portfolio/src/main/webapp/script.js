@@ -276,6 +276,10 @@ function createDivElement(comment, isBlogComment) {
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
  
+  const pElementEmoji = document.createElement('p');
+  pElementEmoji.innerText = comment.emoji;
+  divElement.appendChild(pElementEmoji);
+
   const pElementDate = document.createElement('p');
   pElementDate.innerText = comment.date;
   divElement.appendChild(pElementDate);

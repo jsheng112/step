@@ -156,8 +156,19 @@ body {
 }
 
 /* Style the label to display next to the inputs */
-.col label, #quantity-label {
+.col label, #emoji-label, #quantity-label {
   padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.emoji {
+  width: 100px;
+  margin-right: 90%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
   display: inline-block;
 }
 

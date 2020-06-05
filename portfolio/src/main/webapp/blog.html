@@ -144,10 +144,22 @@
                         <h4>Leave your Comments Below</h4>
                         <form action="blog-comment" method="POST">
                             <label class="label">Name</label>
-                            <input class="contact" type="text" name="name"></input>
+                            <input class="contact" type="text" name="name" required></input>
                             <label class="label">Comment</label>
-                            <input class="contact" type="text" name="comment"></input>
+                            <input class="contact" type="text" name="comment" required></input>
                             <input id="id" name="id" value="4" hidden></input>
+                            <label class="label" id="emoji-label">Emoji</label>
+                            <select class="contact emoji" type="text" name="emoji">
+                                <option value=""></option>
+                                <option value="&#128512">&#128512</option>
+                                <option value="&#128522">&#128522</option>
+                                <option value="&#128525">&#128525</option>
+                                <option value="&#128542">&#128542</option>
+                                <option value="&#128077">&#128077</option>
+                                <option value="&#128078">&#128078</option>
+                                <option value="&#128079">&#128079</option>
+                                <option value="&#128075">&#128075</option>
+                            </select>
                             <input class="button" type="submit" />
                         </form>
                         <label id="quantity-limit">Show All Comments</label>

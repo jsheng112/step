@@ -60,8 +60,9 @@ public class BlogCommentServlet extends HttpServlet {
         String name = (String) entity.getProperty("name");
         long postId = (Long) entity.getProperty("postid");
         long commentId = (Long) entity.getKey().getId();
+        String emoji = (String) entity.getProperty("emoji");
 
-        Comment comment = new Comment(content, time, name, postId, commentId);
+        Comment comment = new Comment(content, time, name, postId, commentId, emoji);
         comments.add(comment);
         
         if (num != -1) {
@@ -73,7 +74,7 @@ public class BlogCommentServlet extends HttpServlet {
     }
     // Send the JSON as the response
     String json = convertToJson(comments);
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(json);
 
   }
@@ -85,12 +86,14 @@ public class BlogCommentServlet extends HttpServlet {
     String name = request.getParameter("name");
     Date currentTime = new Date();
     int id = Integer.parseInt(request.getParameter("id"));
+    String emoji = request.getParameter("emoji");
 
     Entity newPostComment =  new Entity("PostComment");
     newPostComment.setProperty("content", content);
     newPostComment.setProperty("time", currentTime);
     newPostComment.setProperty("name", name);
     newPostComment.setProperty("postid", id);
+    newPostComment.setProperty("emoji", emoji);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(newPostComment);

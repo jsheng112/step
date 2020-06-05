@@ -49,8 +49,9 @@ public class CommentServlet extends HttpServlet {
         Date time = (Date) entity.getProperty("time");
         String name = (String) entity.getProperty("name");
         long id = entity.getKey().getId();
+        String emoji = (String) entity.getProperty("emoji");
 
-        Comment comment = new Comment(content, time, name, 0, id);
+        Comment comment = new Comment(content, time, name, 0, id, emoji);
         comments.add(comment);
         if (num != -1) {
           counter++;
@@ -62,7 +63,7 @@ public class CommentServlet extends HttpServlet {
 
     // Send the JSON as the response
     String json = convertToJson(comments);
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(json);
 
   }
@@ -73,7 +74,8 @@ public class CommentServlet extends HttpServlet {
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
-    service.createNewComment(content, name, currentTime);
+    String emoji = request.getParameter("emoji");
+    service.createNewComment(content, name, currentTime, emoji);
 
     response.sendRedirect("comments.html");
   }

@@ -8,12 +8,14 @@ public class Comment {
     private String name; /* name of the poster */
     private long postId; /* id of the post that it is under */
     private long id; /* unique identifier of the comment*/
- 
-    public Comment(String content, Date d, String n, long p, long idNum) {
+    private String emoji; /* optional emoji */
+    
+    public Comment(String content, Date d, String n, long p, long idNum, String e) {
         comment = content;
         date = d;
         name = n;
         postId = p;
         id = idNum;
+        emoji = e;
     }
 }

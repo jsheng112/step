@@ -60,11 +60,12 @@ public class CommentService {
         return count;
     }
 
-    public void createNewComment(String content, String name, Date currentTime) {
+    public void createNewComment(String content, String name, Date currentTime, String emoji) {
         Entity newComment =  new Entity("Comment");
         newComment.setProperty("content", content);
         newComment.setProperty("time", currentTime);
         newComment.setProperty("name", name);
+        newComment.setProperty("emoji", emoji);
     
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(newComment);
