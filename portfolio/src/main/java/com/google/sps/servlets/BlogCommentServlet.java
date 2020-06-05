@@ -52,7 +52,6 @@ public class BlogCommentServlet extends HttpServlet {
     // get each result from datastore and generate comments 
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int counter = 0;
-    System.out.println("REACHED");
     for (Entity entity : results.asIterable()) {
       // -1 means that we want all comments
       if (counter < num || num == -1) {
@@ -60,8 +59,9 @@ public class BlogCommentServlet extends HttpServlet {
         Date time = (Date) entity.getProperty("time");
         String name = (String) entity.getProperty("name");
         long postId = (Long) entity.getProperty("postid");
+        long commentId = (Long) entity.getKey().getId();
 
-        Comment comment = new Comment(content, time, name, postId, 0);
+        Comment comment = new Comment(content, time, name, postId, commentId);
         comments.add(comment);
         
         if (num != -1) {
@@ -75,7 +75,6 @@ public class BlogCommentServlet extends HttpServlet {
     String json = convertToJson(comments);
     response.setContentType("application/json;");
     response.getWriter().println(json);
-    System.out.println("HERE ARE THE COMMENTS:" + comments);
 
   }
  

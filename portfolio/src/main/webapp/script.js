@@ -80,11 +80,36 @@ function setId(id) {
 Each blog post is identifiable by a unique id (starting
 from 1 being the id of the oldest post) */
 function getPostComments() {
-  const num = document.getElementById("quantity").value;
+  var num = -1;
+  if (!document.getElementById("showall").checked) {
+    num = document.getElementById("quantity").value;
+  }
   const id = document.getElementById("id").value;
   /** get the comments for this specific blog post */
   fetch('blog-comment?num=' + num + "&id=" + id).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
+    commentDivElement.innerHTML = '';
+    const isBlogComment = true;
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i], isBlogComment));
+    }
+  });
+}
+
+function deleteSpecificBlogComment(commentId) {
+  // create and send a POST request for deleting data
+  const id = document.getElementById("id").value;
+  const request = new Request('delete-blog-comments?id=' + id + "&commentId=" + commentId, {method: 'POST'});
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  fetch(request).then(response => fetch('blog-comment?num=' + num + '&id=' + id)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
     commentDivElement.innerHTML = '';
     for (var i = 0; i < data.length; i++) {
       commentDivElement.appendChild(
@@ -98,9 +123,10 @@ function deleteBlogComments() {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
   const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
+
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
-  fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('blog-comment?num=0&id=' + id)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -221,19 +247,24 @@ function setColor() {
  * Fetch comments from the server and adds them to the DOM.
  */
 function getComment() {
-  const num = document.getElementById("quantity").value;
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
+
   fetch('data?num='+num).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
+    const isBlogComment = false;
     for (var i = 0; i < data.length; i++) {
       commentDivElement.appendChild(
-        createDivElement(data[i]));
+        createDivElement(data[i], isBlogComment));
     }
   });
 }
  
 /** Creates a <div> element containing text. */
-function createDivElement(comment) {
+function createDivElement(comment, isBlogComment) {
   const divElement = document.createElement('div');
   divElement.setAttribute("class", "panel");
  
@@ -251,7 +282,11 @@ function createDivElement(comment) {
 
   const button = document.createElement('button');
   button.innerText = "Delete this comment";
-  button.addEventListener("click", (button) => deleteSpecificComment(comment.id));
+  if (isBlogComment) {
+    button.addEventListener("click", (button) => deleteSpecificBlogComment(comment.id));
+  } else {
+    button.addEventListener("click", (button) => deleteSpecificComment(comment.id));
+  }
   divElement.appendChild(button);
   return divElement;
 }
@@ -259,7 +294,10 @@ function createDivElement(comment) {
 function deleteSpecificComment(commentId) {
   // create and send a POST request for deleting data
   const request = new Request('delete-data?id=' + commentId, {method: 'POST'});
-  const num = document.getElementById("quantity").value;
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
   
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
@@ -273,6 +311,8 @@ function deleteSpecificComment(commentId) {
     }
   });
 }
+
+
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data
