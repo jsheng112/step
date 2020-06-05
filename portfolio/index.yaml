@@ -1,0 +1,9 @@
+indexes:
+
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+    direction: asc
+  - name: time
+    direction: desc

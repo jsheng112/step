@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 
 /** Servlet that returns comments under the respective blog posts*/
 @WebServlet("blog-comment")
@@ -44,15 +45,16 @@ public class BlogCommentServlet extends HttpServlet {
     // create filter
     Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
 
-    // create query
+    // // create query
     Query query = new Query("PostComment").setFilter(keyFilter).addSort("time", SortDirection.DESCENDING);
+    // Query query = new Query("PostComment").addSort("time", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     PreparedQuery results = datastore.prepare(query);
     // get each result from datastore and generate comments 
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int counter = 0;
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results.asList(FetchOptions.Builder.withDefaults())) {
       // -1 means that we want all comments
       if (counter < num || num == -1) {
         String content = (String) entity.getProperty("content");
@@ -90,9 +92,9 @@ public class BlogCommentServlet extends HttpServlet {
 
     Entity newPostComment =  new Entity("PostComment");
     newPostComment.setProperty("content", content);
+    newPostComment.setProperty("postid", id);
     newPostComment.setProperty("time", currentTime);
     newPostComment.setProperty("name", name);
-    newPostComment.setProperty("postid", id);
     newPostComment.setProperty("emoji", emoji);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

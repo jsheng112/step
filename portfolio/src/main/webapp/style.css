@@ -161,6 +161,11 @@ body {
   display: inline-block;
 }
 
+#quantity {
+  width: 10%;
+  min-width: 150px;
+}
+
 .emoji {
   width: 100px;
   margin-right: 90%;
@@ -198,6 +203,7 @@ form input{
 
 #delete-button {
   float: right;
+  min-width: 150px;
 }
 
 .right-post-panel {
@@ -229,7 +235,17 @@ form input{
 /* Use a media query to add a breakpoint at 800px: */
 @media screen and (max-width: 800px) {
   .blog-post {
-    display: inline-flex; 
-    width: 25%;
+    width: 40%;
+  }
+  .left, .right, .intro, .image-thumbnails, .expanded {
+    width: 100%;
+  }
+  .expanded {
+    display: inline-block;
+    flex-wrap: wrap;
+    justify-content: center;
+    float: left;
+    margin-right: 0px;
+    margin-left: 0px;
   }
 }
