@@ -39,33 +39,24 @@ public class CommentServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int num = Integer.parseInt(request.getParameter("num")); // number of comments to return
 
-    List<Entity> results = service.findAllComments();
+    // get each result from datastore and generate comments 
+    List<Entity> results = service.findAllComments(num);
     ArrayList<Comment> comments = new ArrayList<Comment>();
-    int counter = 0;
     for (Entity entity : results) {
-      // -1 means that we want all comments returned
-      if (counter < num || num == -1) {
-        String content = (String) entity.getProperty("content");
-        Date time = (Date) entity.getProperty("time");
-        String name = (String) entity.getProperty("name");
-        long id = entity.getKey().getId();
-        String emoji = (String) entity.getProperty("emoji");
+      String content = (String) entity.getProperty("content");
+      Date time = (Date) entity.getProperty("time");
+      String name = (String) entity.getProperty("name");
+      long id = entity.getKey().getId();
+      String emoji = (String) entity.getProperty("emoji");
 
-        Comment comment = new Comment(content, time, name, 0, id, emoji);
-        comments.add(comment);
-        if (num != -1) {
-          counter++;
-        }
-      } else {
-          break;
-      }
+      Comment comment = new Comment(content, time, name, 0, id, emoji);
+      comments.add(comment);
     }
 
     // Send the JSON as the response
     String json = convertToJson(comments);
     response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(json);
-
   }
  
   @Override

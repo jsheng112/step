@@ -43,12 +43,14 @@ public class DeleteCommentsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     String commentId = request.getParameter("id");
+    int num = -1;
     int count;
+    
     if (commentId != null) {
       long id = Long.parseLong(commentId);
       count = service.delete(id);
     } else {
-      List<Entity> results = service.findAllComments();
+      List<Entity> results = service.findAllComments(num);
       count = service.deleteAll(results.toArray(new Entity[0]));
     }
 

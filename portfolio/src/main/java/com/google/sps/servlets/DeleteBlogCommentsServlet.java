@@ -30,6 +30,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
+import java.util.List;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -37,45 +38,27 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 /** Servlet that deletes all blog comments for a specific blog post in datastore */
 @WebServlet("delete-blog-comments")
 public class DeleteBlogCommentsServlet extends HttpServlet {
+  private BlogCommentService service = new BlogCommentService();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // id of the post that we are deleting all comments from
     int id = Integer.parseInt(request.getParameter("id"));
+    int num = -1;
     String commentId = request.getParameter("commentId");
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    int count;
     if (commentId == null) {
-      // create filter
-      Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
-      
-      Query query = new Query("PostComment").setFilter(keyFilter).addSort("time", SortDirection.DESCENDING);
-      PreparedQuery results = datastore.prepare(query);
-      
-      int count = 0;
-      // get each result from datastore and delete comments if that comment has the specific id
-      for (Entity entity : results.asIterable()) {
-        long postId = (long) entity.getProperty("postid");
-        Key taskEntityKey = entity.getKey();
-        datastore.delete(taskEntityKey);
-        count++;
-      }
-    
-      // Send the number of comments deleted as the response
-      response.setContentType("application/json;");
-      response.getWriter().println(count);
+      List<Entity> results = service.findAllComments(num, id);
+      count = service.deleteAll(results.toArray(new Entity[0]));
     } else {
       long commentIdParsed = Long.parseLong(commentId);
-      Key taskEntityKey = KeyFactory.createKey("PostComment", commentIdParsed);
-      datastore.delete(taskEntityKey);
-      int count = 1;
-
-      // Send the number of comments deleted as the response
-      response.setContentType("application/json;");
-      response.getWriter().println(count);
+      count = service.delete(commentIdParsed);
     }
     
-
-    
+    // Send the number of comments deleted as the response
+    response.setContentType("application/json;");
+    response.getWriter().println(count);
   }
   /**
    * Converts an ArrayList instance into a JSON string using the Gson library. 

@@ -17,20 +17,26 @@ import com.google.appengine.api.datastore.FetchOptions;
 import java.util.List;
 import java.util.Date;
 
+/* a class with useful functions for regular comments */
 public class CommentService {
     private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    public List<Entity> findAllComments() {
+    /* find and return comments in descending order by time and return the 
+    first num numbers */
+    public List<Entity> findAllComments(int num) {
         Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
         PreparedQuery results = datastore.prepare(query);
-        return results.asList(FetchOptions.Builder.withDefaults());
+        if (num == -1)
+          return results.asList(FetchOptions.Builder.withDefaults());
+        else
+          return results.asList(FetchOptions.Builder.withLimit(num));
     }
 
+    /* find and return the comment with the specific id */
     public Entity findSpecificComments(long id) {
         // create filter
         Filter keyFilter = new FilterPredicate("id", FilterOperator.EQUAL, id);
         Query query = new Query("Comment").setFilter(keyFilter);
-        System.out.println("TRYING TO DELETE ID" + id);
 
         PreparedQuery results = datastore.prepare(query);
         List<Entity> list = results.asList(FetchOptions.Builder.withDefaults());
@@ -42,6 +48,7 @@ public class CommentService {
         }
     }
 
+    /* delete all entities */
     public int deleteAll(Entity... entities) {
         int count = 0;
         // get each result from datastore and delete comments 
@@ -53,6 +60,7 @@ public class CommentService {
         return count;
     }
 
+    /* delete entity with the specific id */
     public int delete(long id) {
         int count = 1;
         Key taskEntityKey = KeyFactory.createKey("Comment", id);
@@ -60,6 +68,7 @@ public class CommentService {
         return count;
     }
 
+    /* create a new Comment entity with the fields provided */
     public void createNewComment(String content, String name, Date currentTime, String emoji) {
         Entity newComment =  new Entity("Comment");
         newComment.setProperty("content", content);
