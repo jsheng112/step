@@ -45,12 +45,13 @@ public class DeleteCommentsServlet extends HttpServlet {
     String commentId = request.getParameter("id");
     int num = -1;
     int count;
-    
+    String sort = "time-desc";
+
     if (commentId != null) {
       long id = Long.parseLong(commentId);
       count = service.delete(id);
     } else {
-      List<Entity> results = service.findAllComments(num);
+      List<Entity> results = service.findAllComments(num, sort);
       count = service.deleteAll(results.toArray(new Entity[0]));
     }
 

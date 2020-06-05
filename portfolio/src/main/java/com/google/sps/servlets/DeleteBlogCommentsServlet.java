@@ -45,17 +45,18 @@ public class DeleteBlogCommentsServlet extends HttpServlet {
     // id of the post that we are deleting all comments from
     int id = Integer.parseInt(request.getParameter("id"));
     int num = -1;
+    String sort = "time-desc";
     String commentId = request.getParameter("commentId");
 
     int count;
     if (commentId == null) {
-      List<Entity> results = service.findAllComments(num, id);
+      List<Entity> results = service.findAllComments(num, id, sort);
       count = service.deleteAll(results.toArray(new Entity[0]));
     } else {
       long commentIdParsed = Long.parseLong(commentId);
       count = service.delete(commentIdParsed);
     }
-    
+
     // Send the number of comments deleted as the response
     response.setContentType("application/json;");
     response.getWriter().println(count);

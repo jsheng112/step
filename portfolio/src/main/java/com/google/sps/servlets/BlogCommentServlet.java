@@ -43,9 +43,10 @@ public class BlogCommentServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int num = Integer.parseInt(request.getParameter("num")); // the number of comments we want
     int id = Integer.parseInt(request.getParameter("id")); // the id of the specific post
+    String sort = request.getParameter("sort");
 
     // get each result from datastore and generate comments 
-    List<Entity> results = service.findAllComments(num, id);
+    List<Entity> results = service.findAllComments(num, id, sort);
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for (Entity entity : results) {
       String content = (String) entity.getProperty("content");

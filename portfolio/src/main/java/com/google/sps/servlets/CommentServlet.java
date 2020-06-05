@@ -38,9 +38,10 @@ public class CommentServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int num = Integer.parseInt(request.getParameter("num")); // number of comments to return
+    String sort = request.getParameter("sort");
 
     // get each result from datastore and generate comments 
-    List<Entity> results = service.findAllComments(num);
+    List<Entity> results = service.findAllComments(num, sort);
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for (Entity entity : results) {
       String content = (String) entity.getProperty("content");

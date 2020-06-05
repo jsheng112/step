@@ -85,8 +85,9 @@ function getPostComments() {
     num = document.getElementById("quantity").value;
   }
   const id = document.getElementById("id").value;
+  sort = document.getElementById("sort").value;
   /** get the comments for this specific blog post */
-  fetch('blog-comment?num=' + num + "&id=" + id).then(response => response.json()).then((data) => {
+  fetch('blog-comment?num=' + num + "&id=" + id + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = true;
@@ -97,6 +98,7 @@ function getPostComments() {
   });
 }
 
+/** deletes a blog comment with specific comment id */
 function deleteSpecificBlogComment(commentId) {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
@@ -105,9 +107,10 @@ function deleteSpecificBlogComment(commentId) {
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
   }
+
+  sort = document.getElementById("sort").value;
   // after POST returns response, create a GET request to get the data again
-  // which returns 0 comments
-  fetch(request).then(response => fetch('blog-comment?num=' + num + '&id=' + id)).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('blog-comment?num=' + num + '&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -126,7 +129,8 @@ function deleteBlogComments() {
 
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
-  fetch(request).then(response => fetch('blog-comment?num=0&id=' + id)).then(response => response.json()).then((data) => {
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('blog-comment?num=0&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -251,8 +255,9 @@ function getComment() {
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
   }
+  sort = document.getElementById("sort").value;
 
-  fetch('data?num='+num).then(response => response.json()).then((data) => {
+  fetch('data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = false;
@@ -295,6 +300,7 @@ function createDivElement(comment, isBlogComment) {
   return divElement;
 }
 
+/** deletes a comment with specific comment id */
 function deleteSpecificComment(commentId) {
   // create and send a POST request for deleting data
   const request = new Request('delete-data?id=' + commentId, {method: 'POST'});
@@ -304,8 +310,8 @@ function deleteSpecificComment(commentId) {
   }
   
   // after POST returns response, create a GET request to get the data again
-  // which returns 0 comments
-  fetch(request).then(response => fetch('data?num=' + num)).then(response => response.json()).then((data) => {
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('data?num=' + num + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -324,7 +330,8 @@ function deletePosts() {
   
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
-  fetch(request).then(response => fetch('data?num=0')).then(response => response.json()).then((data) => {
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('data?num=0' + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';

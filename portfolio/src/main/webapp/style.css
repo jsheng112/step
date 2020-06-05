@@ -203,6 +203,7 @@ form input{
 
 #delete-button {
   float: right;
+  display: inline-block;
   min-width: 150px;
 }
 
@@ -230,6 +231,15 @@ form input{
   max-width: 950px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.dropdown {
+  width: auto;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
 /* Use a media query to add a breakpoint at 800px: */

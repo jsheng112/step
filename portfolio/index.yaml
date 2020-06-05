@@ -1,9 +1,22 @@
 indexes:
-
 - kind: PostComment
   ancestor: no
   properties:
   - name: postid
-    direction: asc
   - name: time
-    direction: desc
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+  - name: content
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+  - name: name
+- kind: Comment
+  ancestor: no
+  properties:
+  - name: time
+  - name: content
+  - name: name

@@ -42,11 +42,18 @@
                 </select>
                 <input class="button" type="submit" />
             </form>
+            <hr>
             <label id="quantity-limit">Show All Comments</label>
             <input type="checkbox" id="showall" name="showall" onchange="getComment();" checked></input>
             <br>
             <label id="quantity-label" for="quantity">Number of comments shown:</label>
             <input type="number" id="quantity" name="quantity" min="0" value="" onchange="getComment();"/>
+            <select class="contact dropdown" id="sort" type="text" onchange="getComment();">
+                <option value="time-desc">Newest to Oldest</option>
+                <option value="time-asc">Oldest to Newest</option>
+                <option value="content-asc">Alphabetical by Comment</option>
+                <option value="name-asc">Alphabetical by Name</option>
+            </select>
             <button class="button" id="delete-button" type="submit" onclick="deletePosts();">Delete All Comments</button>
             <div id="data-container"></div>
         </div>

@@ -23,8 +23,17 @@ public class CommentService {
 
     /* find and return comments in descending order by time and return the 
     first num numbers */
-    public List<Entity> findAllComments(int num) {
-        Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+    public List<Entity> findAllComments(int num, String sort) {
+        Query query;
+        // select sorts based on input
+        if (sort.equals("time-desc"))
+            query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+        else if (sort.equals("time-asc"))
+            query = new Query("Comment").addSort("time", SortDirection.ASCENDING);
+        else if (sort.equals("content-asc"))
+            query = new Query("Comment").addSort("content", SortDirection.ASCENDING);
+        else
+            query = new Query("Comment").addSort("name", SortDirection.ASCENDING);
         PreparedQuery results = datastore.prepare(query);
         if (num == -1)
           return results.asList(FetchOptions.Builder.withDefaults());

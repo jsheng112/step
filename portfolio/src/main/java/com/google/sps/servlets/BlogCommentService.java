@@ -23,12 +23,22 @@ public class BlogCommentService {
 
     /* find and return blog comments in descending order by time and return the 
     first num numbers */
-    public List<Entity> findAllComments(int num, int id) {
+    public List<Entity> findAllComments(int num, int id, String sort) {
       // create filter
       Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
 
       // create query
-      Query query = new Query("PostComment").setFilter(keyFilter).addSort("time", SortDirection.DESCENDING);
+      Query query = new Query("PostComment").setFilter(keyFilter);
+      // select sorts based on input
+      if (sort.equals("time-desc"))
+        query.addSort("time", SortDirection.DESCENDING);
+      else if (sort.equals("time-asc"))
+        query.addSort("time", SortDirection.ASCENDING);
+      else if (sort.equals("content-asc"))
+        query.addSort("content", SortDirection.ASCENDING);
+      else
+        query.addSort("name", SortDirection.ASCENDING);
+
       PreparedQuery results = datastore.prepare(query);
       if (num == -1)
         return results.asList(FetchOptions.Builder.withDefaults());
