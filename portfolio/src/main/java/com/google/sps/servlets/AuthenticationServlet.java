@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 @WebServlet("/auth")
 public class AuthenticationServlet extends HttpServlet {
@@ -33,28 +34,30 @@ public class AuthenticationServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/";
+      String urlToRedirectToAfterUserLogsOut = "/comments.html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
       // Send the JSON as the response
-      String json = convertToJson(userEmail);
+      String[] result = {userEmail, logoutUrl};
+      String json = convertToJson(result);
       response.setContentType("application/json; charset=utf-8");
       response.getWriter().println(json);
 
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/";
+      String urlToRedirectToAfterUserLogsIn = "/comments.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
       // Send the JSON as the response
-      String json = convertToJson("stranger");
+      String[] result = {"Stranger", loginUrl};
+      String json = convertToJson(result);
       response.setContentType("application/json; charset=utf-8");
       response.getWriter().println(json);
     }
   }
   /**
-   * Converts a String instance into a JSON string using the Gson library. 
+   * Converts a String array instance into a JSON string using the Gson library. 
    */
-  private String convertToJson(String s) {
+  private String convertToJson(String[] s) {
     Gson gson = new Gson();
     String json = gson.toJson(s);
     return json;

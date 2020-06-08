@@ -343,11 +343,21 @@ function deletePosts() {
 }
 
 function checkAuth(){
-    fetch('auth').then(response => response.json()).then((data) => {
+  fetch('auth').then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('auth-container');
     const pElement = document.createElement('p');
-    pElement.innerHTML = data;
+    pElement.innerHTML = "Hello " + data[0];
+    const pElementUrl = document.createElement('p');
+    
+    if (data[0] != "Stranger") {
+      document.getElementById("comment-form").style.display = "true";
+      pElementUrl.innerHTML = "Logout <a href=\"" + data[1] + "\">here</a>.";
+    
+    } else {
+      pElementUrl.innerHTML = "Login <a href=\"" + data[1] + "\">here</a>.";
+    }
     commentDivElement.appendChild(pElement);
+    commentDivElement.appendChild(pElementUrl);
     
   });
 }
