@@ -29,6 +29,8 @@ import java.util.List;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
@@ -49,8 +51,9 @@ public class CommentServlet extends HttpServlet {
       String name = (String) entity.getProperty("name");
       long id = entity.getKey().getId();
       String emoji = (String) entity.getProperty("emoji");
+      String email = (String) entity.getProperty("email");
 
-      Comment comment = new Comment(content, time, name, 0, id, emoji);
+      Comment comment = new Comment(content, time, name, 0, id, emoji, email);
       comments.add(comment);
     }
 
@@ -63,13 +66,22 @@ public class CommentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get parameters andcreate a new entity
+    UserService userService = UserServiceFactory.getUserService();
+
+    // Only logged-in users can post messages
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/comments.html");
+      return;
+    }
+
+    String email = userService.getCurrentUser().getEmail();
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
     String emoji = request.getParameter("emoji");
-    service.createNewComment(content, name, currentTime, emoji);
+    service.createNewComment(content, name, currentTime, emoji, email);
 
-    response.sendRedirect("comments.html");
+    response.sendRedirect("/comments.html");
   }
  
   /**

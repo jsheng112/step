@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();loadPosts();">
+<body onload="setColor();loadPosts();checkAuth()">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -141,8 +141,9 @@
                             capstone final project will be one that makes a difference in the world.</p>
                     </div>
                     <div class="right-post-panel post-comments" id="comment-container">
+                        <div id="auth-container"></div>
                         <h4>Leave your Comments Below</h4>
-                        <form action="blog-comment" method="POST">
+                        <form id="comment-form" action="blog-comment" method="POST">
                             <label class="label">Name</label>
                             <input class="contact" type="text" name="name" required></input>
                             <label class="label">Comment</label>

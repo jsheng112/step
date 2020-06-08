@@ -277,6 +277,11 @@ function createDivElement(comment, isBlogComment) {
   pElementName.innerText = comment.name;
   divElement.appendChild(pElementName);
 
+  const pElementEmail = document.createElement('p');
+  pElementEmail.innerText = comment.email;
+  divElement.appendChild(pElementEmail);
+  
+
   const pElement = document.createElement('p');
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
@@ -345,18 +350,19 @@ function deletePosts() {
 function checkAuth(){
   fetch('auth').then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('auth-container');
-    const pElement = document.createElement('p');
-    pElement.innerHTML = "Hello " + data[0];
+    const hElement = document.createElement('h1');
+    hElement.innerHTML = "Hello " + data[0];
     const pElementUrl = document.createElement('p');
     
     if (data[0] != "Stranger") {
-      document.getElementById("comment-form").style.display = "true";
+      document.getElementById("comment-form").style.display = "block";
       pElementUrl.innerHTML = "Logout <a href=\"" + data[1] + "\">here</a>.";
     
     } else {
+      document.getElementById("comment-form").style.display = "none";
       pElementUrl.innerHTML = "Login <a href=\"" + data[1] + "\">here</a>.";
     }
-    commentDivElement.appendChild(pElement);
+    commentDivElement.appendChild(hElement);
     commentDivElement.appendChild(pElementUrl);
     
   });

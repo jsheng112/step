@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();getComment();">
+<body onload="setColor();getComment();checkAuth()">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -22,8 +22,9 @@
     </nav>
     <div id="container">
         <div id="comment-container">
+            <div id="auth-container"></div>
             <h1>Leave your Comments Below</h1>
-            <form id="comment-form" action="data" method="POST" hidden>
+            <form id="comment-form" action="data" method="POST" display="hidden">
                 <label class="label">Name</label>
                 <input class="contact" type="text" name="name" required></input>
                 <label class="label">Comment</label>
@@ -55,9 +56,7 @@
                 <option value="name-asc">Alphabetical by Name</option>
             </select>
             <button class="button" id="delete-button" type="submit" onclick="deletePosts();">Delete All Comments</button>
-            <button class="button" onclick="checkAuth()">Are you logged in</button> 
-            <div id="auth-container"></div>
-            <div id="data-container"></div>
+            <div id="data-container"></div>          
         </div>
     </div>
   </body>

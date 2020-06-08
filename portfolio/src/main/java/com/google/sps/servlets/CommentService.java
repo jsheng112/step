@@ -78,12 +78,13 @@ public class CommentService {
     }
 
     /* create a new Comment entity with the fields provided */
-    public void createNewComment(String content, String name, Date currentTime, String emoji) {
+    public void createNewComment(String content, String name, Date currentTime, String emoji, String email) {
         Entity newComment =  new Entity("Comment");
         newComment.setProperty("content", content);
         newComment.setProperty("time", currentTime);
         newComment.setProperty("name", name);
         newComment.setProperty("emoji", emoji);
+        newComment.setProperty("email", email);
     
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(newComment);
