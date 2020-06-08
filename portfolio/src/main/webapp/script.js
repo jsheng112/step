@@ -341,3 +341,13 @@ function deletePosts() {
     }
   });
 }
+
+function checkAuth(){
+    fetch('auth').then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('auth-container');
+    const pElement = document.createElement('p');
+    pElement.innerHTML = data;
+    commentDivElement.appendChild(pElement);
+    
+  });
+}
