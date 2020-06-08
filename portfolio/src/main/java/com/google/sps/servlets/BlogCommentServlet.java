@@ -59,7 +59,7 @@ public class BlogCommentServlet extends HttpServlet {
       String emoji = (String) entity.getProperty("emoji");
       String email = (String) entity.getProperty("email");
 
-      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email);
+      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, "");
       comments.add(comment);
     }
 

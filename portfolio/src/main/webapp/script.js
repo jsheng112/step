@@ -285,6 +285,10 @@ function createDivElement(comment, isBlogComment) {
   pElementEmoji.innerText = comment.emoji;
   divElement.appendChild(pElementEmoji);
 
+  const imgElement = document.createElement('a');
+  imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
+  divElement.appendChild(imgElement);
+
   const pElementDate = document.createElement('p');
   pElementDate.innerText = comment.date;
   divElement.appendChild(pElementDate);
@@ -357,11 +361,14 @@ function checkAuth(redirect){
     if (data[0] != "Stranger") {
       hElement.innerHTML = "Hello " + data[0];
       document.getElementById("comment-form").style.display = "block";
+      document.getElementById("delete-button").style.display = "block";
       liElement.innerHTML = "<a href=\"" + data[1] + "\">Logout</a>";
+      
     
     } else {
       hElement.innerHTML = "Hello! Please login to post a comment";
       document.getElementById("comment-form").style.display = "none";
+      document.getElementById("delete-button").style.display = "none";
       liElement.innerHTML = "<a href=\"" + data[1] + "\">Login</a>";
     }
     commentDivElement.appendChild(hElement);
@@ -379,4 +386,10 @@ function fetchBlobstoreUrl() {
         const messageForm = document.getElementById('comment-form');
         messageForm.action = imageUploadUrl;
       });
+}
+
+function init(page) {
+    setColor();
+    loadPosts();
+    checkAuth(page);
 }

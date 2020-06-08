@@ -35,27 +35,23 @@ public class AuthenticationServlet extends HttpServlet {
     String redirect = request.getParameter("redirect");
 
     UserService userService = UserServiceFactory.getUserService();
+    String[] result = new String[2];
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/" + redirect + ".html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-
-      // Send the JSON as the response
-      String[] result = {userEmail, logoutUrl};
-      String json = convertToJson(result);
-      response.setContentType("application/json; charset=utf-8");
-      response.getWriter().println(json);
-
+      result[0] = userEmail;
+      result[1] = logoutUrl;
     } else {
       String urlToRedirectToAfterUserLogsIn = "/" + redirect + ".html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
-      // Send the JSON as the response
-      String[] result = {"Stranger", loginUrl};
-      String json = convertToJson(result);
-      response.setContentType("application/json; charset=utf-8");
-      response.getWriter().println(json);
+      result[0] = "Stranger";
+      result[1] = loginUrl;
     }
+    // Send the JSON as the response
+    String json = convertToJson(result);
+    response.setContentType("application/json; charset=utf-8");
+    response.getWriter().println(json);
   }
   /**
    * Converts a String array instance into a JSON string using the Gson library. 

@@ -10,8 +10,9 @@ public class Comment {
     private long id; /* unique identifier of the comment*/
     private String emoji; /* optional emoji */
     private String email;
+    private String image;
     
-    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount) {
+    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount, String imageUrl) {
         comment = content;
         date = d;
         name = n;
@@ -19,5 +20,6 @@ public class Comment {
         id = idNum;
         emoji = e;
         email = emailAccount;
+        image = imageUrl;
     }
 }
