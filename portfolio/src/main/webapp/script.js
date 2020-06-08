@@ -322,6 +322,7 @@ function deleteSpecificComment(commentId) {
   });
 }
 
+
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data
@@ -367,4 +368,15 @@ function checkAuth(redirect){
     navElement.appendChild(liElement);
     
   });
+}
+
+function fetchBlobstoreUrl() {
+  fetch('/blobstore-upload-url')
+      .then((response) => {
+        return response.text();
+      })
+      .then((imageUploadUrl) => {
+        const messageForm = document.getElementById('comment-form');
+        messageForm.action = imageUploadUrl;
+      });
 }
