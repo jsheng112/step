@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor()">
+<body onload="setColor();loadPosts();">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -24,10 +24,10 @@
     <div id="container">
         <div class="container-fluid">
             <div class="row">
-                <h2>Welcome to my Blog!</h2>
+                <h1>Welcome to my Blog!</h1>
                 <div class="left">
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" id="post4" onclick="expandPost(this, 4);setId(4);getPostComments();">
                             <h4>May 18th, 2020</h4>
                             <h4>First Day at Google</h4>
                             <p>Today is my first day as a Google STEP intern! I am so excited to start this internship 
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" id="post3" onclick="expandPost(this, 3);setId(3);getPostComments();">
                             <h4>May 12th, 2020</h4>
                             <h4>TigerTickets</h4>
                             <p>Today at 5:00pm EST, our TigerTickets team handed in our final web application for the semester. 
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" id="post2" onclick="expandPost(this, 2);setId(2);getPostComments();">
                             <h4>December 7, 2019</h4>
                             <h4>IgniteSTEM xPrinceton</h4>
                             <p>Today is the day of the IgniteSTEM xPrinceton Conference. I got up at 5:30am in the morning in 
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col panel blog-post" onclick="expandPost(this)">
+                        <div class="col panel blog-post" id="post1" onclick="expandPost(this, 1);setId(1);getPostComments();">
                             <h4>June 23th, 2019</h4>
                             <h4>First Day at Tezign</h4>
                             <p>Hi everyone! I’m Jenny, a freshman computer science major, and this is my first blog post! This summer 
@@ -126,18 +126,57 @@
                         </div>
                     </div>
                 </div>
-                <div class="right panel" id="full-post">
-                    <h4>May 18th, 2020</h4>
-                    <h4>First Day at Google</h4>
-                    <p>Today is my first day as a Google STEP intern! I am so excited to start this internship 
-                        and even though the internship format was changed, I still hope to learn many things this summer.
-                        This internship structure is very interesting because in the semester that just ended I had just taken
-                        a course in web development. It was a survey course that touched upon many different aspects of web 
-                        programming, but the whole course was very Python oriented. Through this internship, I hope to learn more
-                        about other languages/techniques/frameworks commonly used in web applications. For me, this summer is my
-                        rite of passage into software engineering professionalism. I am excited to share this journey with my podmates, 
-                        and place trust and confidence in each other as we strive together to write quality software. I hope that our
-                        capstone final project will be one that makes a difference in the world.</p>
+                <div class="right">
+                    <div class="post-panel right-post-panel" id="full-post">
+                        <h4>May 18th, 2020</h4>
+                        <h4>First Day at Google</h4>
+                        <p>Today is my first day as a Google STEP intern! I am so excited to start this internship 
+                            and even though the internship format was changed, I still hope to learn many things this summer.
+                            This internship structure is very interesting because in the semester that just ended I had just taken
+                            a course in web development. It was a survey course that touched upon many different aspects of web 
+                            programming, but the whole course was very Python oriented. Through this internship, I hope to learn more
+                            about other languages/techniques/frameworks commonly used in web applications. For me, this summer is my
+                            rite of passage into software engineering professionalism. I am excited to share this journey with my podmates, 
+                            and place trust and confidence in each other as we strive together to write quality software. I hope that our
+                            capstone final project will be one that makes a difference in the world.</p>
+                    </div>
+                    <div class="right-post-panel post-comments" id="comment-container">
+                        <h4>Leave your Comments Below</h4>
+                        <form action="blog-comment" method="POST">
+                            <label class="label">Name</label>
+                            <input class="contact" type="text" name="name" required></input>
+                            <label class="label">Comment</label>
+                            <input class="contact" type="text" name="comment" required></input>
+                            <input id="id" name="id" value="4" hidden></input>
+                            <label class="label" id="emoji-label">Emoji</label>
+                            <select class="contact emoji" type="text" name="emoji">
+                                <option value=""></option>
+                                <option value="&#128512">&#128512</option>
+                                <option value="&#128522">&#128522</option>
+                                <option value="&#128525">&#128525</option>
+                                <option value="&#128542">&#128542</option>
+                                <option value="&#128077">&#128077</option>
+                                <option value="&#128078">&#128078</option>
+                                <option value="&#128079">&#128079</option>
+                                <option value="&#128075">&#128075</option>
+                            </select>
+                            <input class="button" type="submit" />
+                        </form>
+                        <hr/>
+                        <label id="quantity-limit">Show All Comments</label>
+                        <input type="checkbox" id="showall" name="showall" onchange="getPostComments();" checked></input>
+                        <br/>
+                        <label id="quantity-label" for="quantity">Number of comments shown:</label>
+                        <input type="number" id="quantity" name="quantity" min="0" onchange="getPostComments();"/>
+                        <select class="contact dropdown" id="sort" type="text" onchange="getPostComments();">
+                            <option value="time-desc">Newest to Oldest</option>
+                            <option value="time-asc">Oldest to Newest</option>
+                            <option value="content-asc">Alphabetical by Comment</option>
+                            <option value="name-asc">Alphabetical by Name</option>
+                        </select>
+                        <button class="button" id="delete-button" type="submit" onclick="deleteBlogComments();">Delete All Comments</button>
+                        <div id="data-container"></div>
+                    </div>
                 </div>
             </div>
         </div>

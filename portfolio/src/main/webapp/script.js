@@ -37,14 +37,108 @@ function randomizeFacts() {
   factContainer.innerText = randomFact;
  
 }
+
+/** when first loading the page, either load the latest
+post or the post last clicked on */
+function loadPosts() {
+  postId = localStorage.getItem("postid");
+  if (postId == null) {
+    document.getElementById("post4").click();
+    setId(4);
+  } else {
+    document.getElementById("post" + postId).click();
+    setId(postId);
+  }
+}
  
 /** Expands the selected post to show the full content */
-function expandPost(post) {
+function expandPost(post, id) {
   const content = post.innerHTML;
  
   /** Display the content in the right panel */
   fullPost = document.getElementById("full-post");
   fullPost.innerHTML=content;
+
+  /** set the last seen post to this one */
+  localStorage.setItem("postid", id);
+
+  /** show border only on the expanded post */
+  for (var i = 1; i <= 4; i++) {
+    if (i != id)
+      document.getElementById("post" + i).style.borderStyle = "none";
+  }
+  post.style.borderStyle = "solid";
+}
+
+/** sets the id of the selected blog post */
+function setId(id) {
+  idInput = document.getElementById("id");
+  idInput.value = id;
+}
+
+/** get all the comments under a specific blog post.
+Each blog post is identifiable by a unique id (starting
+from 1 being the id of the oldest post) */
+function getPostComments() {
+  var num = -1;
+  if (!document.getElementById("showall").checked) {
+    num = document.getElementById("quantity").value;
+  }
+  const id = document.getElementById("id").value;
+  sort = document.getElementById("sort").value;
+  /** get the comments for this specific blog post */
+  fetch('blog-comment?num=' + num + "&id=" + id + '&sort=' + sort).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+    commentDivElement.innerHTML = '';
+    const isBlogComment = true;
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i], isBlogComment));
+    }
+  });
+}
+
+/** deletes a blog comment with specific comment id */
+function deleteSpecificBlogComment(commentId) {
+  // create and send a POST request for deleting data
+  const id = document.getElementById("id").value;
+  const request = new Request('delete-blog-comments?id=' + id + "&commentId=" + commentId, {method: 'POST'});
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
+
+  sort = document.getElementById("sort").value;
+  // after POST returns response, create a GET request to get the data again
+  fetch(request).then(response => fetch('blog-comment?num=' + num + '&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
+    }
+  });
+}
+
+/** deletes all comments from blog post with the specific id */
+function deleteBlogComments() {
+  // create and send a POST request for deleting data
+  const id = document.getElementById("id").value;
+  const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
+
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('blog-comment?num=0&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
+    }
+  });
 }
  
 /**Changes the background color of index.html according to
@@ -154,25 +248,96 @@ function setColor() {
 }
  
 /**
- * Fetches hard-coded json from the server and adds them to the DOM.
+ * Fetch comments from the server and adds them to the DOM.
  */
-function getData() {
-  fetch('data').then(response => response.json()).then((data) => {
+function getComment() {
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
+  sort = document.getElementById("sort").value;
+
+  fetch('data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
+    const isBlogComment = false;
     for (var i = 0; i < data.length; i++) {
       commentDivElement.appendChild(
-      createDivElement(data[i] + "\n"));
+        createDivElement(data[i], isBlogComment));
     }
   });
 }
  
 /** Creates a <div> element containing text. */
-function createDivElement(text) {
+function createDivElement(comment, isBlogComment) {
   const divElement = document.createElement('div');
   divElement.setAttribute("class", "panel");
+ 
+  const pElementName = document.createElement('p');
+  pElementName.innerText = comment.name;
+  divElement.appendChild(pElementName);
+
   const pElement = document.createElement('p');
-  pElement.innerText = text;
+  pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
+ 
+  const pElementEmoji = document.createElement('p');
+  pElementEmoji.innerText = comment.emoji;
+  divElement.appendChild(pElementEmoji);
+
+  const pElementDate = document.createElement('p');
+  pElementDate.innerText = comment.date;
+  divElement.appendChild(pElementDate);
+
+  const button = document.createElement('button');
+  button.innerText = "Delete this comment";
+  if (isBlogComment) {
+    button.addEventListener("click", (button) => deleteSpecificBlogComment(comment.id));
+  } else {
+    button.addEventListener("click", (button) => deleteSpecificComment(comment.id));
+  }
+  divElement.appendChild(button);
   return divElement;
+}
+
+/** deletes a comment with specific comment id */
+function deleteSpecificComment(commentId) {
+  // create and send a POST request for deleting data
+  const request = new Request('delete-data?id=' + commentId, {method: 'POST'});
+  var num = -1;
+  if (!(document.getElementById("showall").checked)) {
+    num = document.getElementById("quantity").value;
+  }
+  
+  // after POST returns response, create a GET request to get the data again
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('data?num=' + num + "&sort=" + sort)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
+    }
+  });
+}
+
+
+/** deletes all posts upon clicking the button */
+function deletePosts() {
+  // create and send a POST request for deleting data
+  const request = new Request('delete-data', {method: 'POST'});
+  
+  // after POST returns response, create a GET request to get the data again
+  // which returns 0 comments
+  sort = document.getElementById("sort").value;
+  fetch(request).then(response => fetch('data?num=0' + "&sort=" + sort)).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('data-container');
+
+    commentDivElement.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+      commentDivElement.appendChild(
+      createDivElement(data[i]));
+    }
+  });
 }

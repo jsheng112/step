@@ -1,0 +1,22 @@
+indexes:
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+  - name: time
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+  - name: content
+- kind: PostComment
+  ancestor: no
+  properties:
+  - name: postid
+  - name: name
+- kind: Comment
+  ancestor: no
+  properties:
+  - name: time
+  - name: content
+  - name: name

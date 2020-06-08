@@ -9,8 +9,8 @@ div.row {
 }
 
 img {
-    width: 50%;
-    height: auto;
+  width: 50%;
+  height: auto;
 }
 
 #image-display {
@@ -50,11 +50,11 @@ li a:hover {
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #selectedImg {
-    width: 100%;
+  width: 100%;
 }
 
 .image-thumbnails {
@@ -93,11 +93,11 @@ body {
 
 .left {
   float: left;
-  width: 18%;
+  width: 20%;
   
 }
 .right {
-  float: left;
+  float: right;
   width: 80%;
 }
 
@@ -156,22 +156,106 @@ body {
 }
 
 /* Style the label to display next to the inputs */
-label {
+.col label, #emoji-label, #quantity-label {
   padding: 12px 12px 12px 0;
   display: inline-block;
 }
 
+#quantity {
+  width: 10%;
+  min-width: 150px;
+}
+
+.emoji {
+  width: 100px;
+  margin-right: 90%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  display: inline-block;
+}
+
 .input-contact {
-    width: 100%;
+  width: 100%;
 }
 
 .container-contact {
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
-    max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  max-width: 950px;
 }
 
 .submit {
-    text-align: center;
+  text-align: center;
+}
+
+form input{
+  margin-top: 1em;
+}
+
+.label {
+  padding: 12px 0 0 0;
+  display: inline-block;
+}
+
+#delete-button {
+  float: right;
+  display: inline-block;
+  min-width: 150px;
+}
+
+.right-post-panel {
+  float: right;
+  width: 100%;
+}
+
+.post-panel {
+  background-color: #f2f2f2;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-comments { 
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dropdown {
+  width: auto;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* Use a media query to add a breakpoint at 800px: */
+@media screen and (max-width: 800px) {
+  .blog-post {
+    width: 40%;
+  }
+  .left, .right, .intro, .image-thumbnails, .expanded {
+    width: 100%;
+  }
+  .expanded {
+    display: inline-block;
+    flex-wrap: wrap;
+    justify-content: center;
+    float: left;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
 }

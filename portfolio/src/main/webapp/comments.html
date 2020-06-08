@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();getData();">
+<body onload="setColor();getComment();">
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -21,7 +21,42 @@
         </ul>
     </nav>
     <div id="container">
-        <div id="data-container"></div>
+        <div id="comment-container">
+            <h1>Leave your Comments Below</h1>
+            <form action="data" method="POST">
+                <label class="label">Name</label>
+                <input class="contact" type="text" name="name" required></input>
+                <label class="label">Comment</label>
+                <input class="contact" type="text" name="comment" required></input>
+                <label class="label" id="emoji-label">Emoji</label>
+                <select class="contact emoji" type="text" name="emoji">
+                    <option value=""></option>
+                    <option value="&#128512">&#128512</option>
+                    <option value="&#128522">&#128522</option>
+                    <option value="&#128525">&#128525</option>
+                    <option value="&#128542">&#128542</option>
+                    <option value="&#128077">&#128077</option>
+                    <option value="&#128078">&#128078</option>
+                    <option value="&#128079">&#128079</option>
+                    <option value="&#128075">&#128075</option>
+                </select>
+                <input class="button" type="submit" />
+            </form>
+            <hr>
+            <label id="quantity-limit">Show All Comments</label>
+            <input type="checkbox" id="showall" name="showall" onchange="getComment();" checked></input>
+            <br>
+            <label id="quantity-label" for="quantity">Number of comments shown:</label>
+            <input type="number" id="quantity" name="quantity" min="0" value="" onchange="getComment();"/>
+            <select class="contact dropdown" id="sort" type="text" onchange="getComment();">
+                <option value="time-desc">Newest to Oldest</option>
+                <option value="time-asc">Oldest to Newest</option>
+                <option value="content-asc">Alphabetical by Comment</option>
+                <option value="name-asc">Alphabetical by Name</option>
+            </select>
+            <button class="button" id="delete-button" type="submit" onclick="deletePosts();">Delete All Comments</button>
+            <div id="data-container"></div>
+        </div>
     </div>
   </body>
 </html>
