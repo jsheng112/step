@@ -88,7 +88,7 @@ public class BlogCommentServlet extends HttpServlet {
     String emoji = request.getParameter("emoji");
 
     service.createNewComment(content, id, currentTime, name, emoji, email);
-    response.sendRedirect("blog.html");
+    response.sendRedirect("/blog.html");
   }
  
   /**

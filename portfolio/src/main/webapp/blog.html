@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();loadPosts();checkAuth()">
+<body onload="setColor();loadPosts();checkAuth('blog')">
     <nav>
-        <ul>
+        <ul id="nav">
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="projects.html">Projects</a></li>
@@ -142,8 +142,8 @@
                     </div>
                     <div class="right-post-panel post-comments" id="comment-container">
                         <div id="auth-container"></div>
-                        <h4>Leave your Comments Below</h4>
-                        <form id="comment-form" action="blog-comment" method="POST">
+                        <form id="comment-form" action="blog-comment" method="POST" display="none">
+                            <h4>Leave your Comments Below</h4>
                             <label class="label">Name</label>
                             <input class="contact" type="text" name="name" required></input>
                             <label class="label">Comment</label>

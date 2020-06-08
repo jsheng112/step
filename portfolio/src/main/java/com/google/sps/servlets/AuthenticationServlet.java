@@ -31,10 +31,13 @@ public class AuthenticationServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
 
+    // get the correct link to redirect to
+    String redirect = request.getParameter("redirect");
+
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/comments.html";
+      String urlToRedirectToAfterUserLogsOut = "/" + redirect + ".html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
       // Send the JSON as the response
@@ -44,7 +47,7 @@ public class AuthenticationServlet extends HttpServlet {
       response.getWriter().println(json);
 
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/comments.html";
+      String urlToRedirectToAfterUserLogsIn = "/" + redirect + ".html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
       // Send the JSON as the response

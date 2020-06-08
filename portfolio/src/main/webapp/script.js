@@ -277,11 +277,6 @@ function createDivElement(comment, isBlogComment) {
   pElementName.innerText = comment.name;
   divElement.appendChild(pElementName);
 
-  const pElementEmail = document.createElement('p');
-  pElementEmail.innerText = comment.email;
-  divElement.appendChild(pElementEmail);
-  
-
   const pElement = document.createElement('p');
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
@@ -327,7 +322,6 @@ function deleteSpecificComment(commentId) {
   });
 }
 
-
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data
@@ -347,23 +341,30 @@ function deletePosts() {
   });
 }
 
-function checkAuth(){
-  fetch('auth').then(response => response.json()).then((data) => {
+/** checks whether the user is authenticated and adjust elements 
+according to whether the user is logged in or logged out */
+function checkAuth(redirect){
+  // send request for information on login status
+  fetch('auth?redirect=' + redirect).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('auth-container');
     const hElement = document.createElement('h1');
-    hElement.innerHTML = "Hello " + data[0];
-    const pElementUrl = document.createElement('p');
+    const navElement = document.getElementById("nav");
+    const liElement = document.createElement('li');
     
+    // adjust visibility and login/logout button according to 
+    // whether user is logged in or not
     if (data[0] != "Stranger") {
+      hElement.innerHTML = "Hello " + data[0];
       document.getElementById("comment-form").style.display = "block";
-      pElementUrl.innerHTML = "Logout <a href=\"" + data[1] + "\">here</a>.";
+      liElement.innerHTML = "<a href=\"" + data[1] + "\">Logout</a>";
     
     } else {
+      hElement.innerHTML = "Hello! Please login to post a comment";
       document.getElementById("comment-form").style.display = "none";
-      pElementUrl.innerHTML = "Login <a href=\"" + data[1] + "\">here</a>.";
+      liElement.innerHTML = "<a href=\"" + data[1] + "\">Login</a>";
     }
     commentDivElement.appendChild(hElement);
-    commentDivElement.appendChild(pElementUrl);
+    navElement.appendChild(liElement);
     
   });
 }
