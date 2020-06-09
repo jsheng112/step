@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();getComment();">
+<body onload="setColor();getComment();checkAuth('comments');fetchBlobstoreUrl();">
     <nav>
-        <ul>
+        <ul id="nav">
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="projects.html">Projects</a></li>
@@ -22,8 +22,9 @@
     </nav>
     <div id="container">
         <div id="comment-container">
-            <h1>Leave your Comments Below</h1>
-            <form action="data" method="POST">
+            <div id="auth-container"></div>
+            <form id="comment-form" action="data" method="POST" display="none" >
+                <h1>Leave your Comments Below</h1>
                 <label class="label">Name</label>
                 <input class="contact" type="text" name="name" required></input>
                 <label class="label">Comment</label>
@@ -40,6 +41,8 @@
                     <option value="&#128079">&#128079</option>
                     <option value="&#128075">&#128075</option>
                 </select>
+                <label class="label">Upload an image:</label>
+                <input class="contact upload" type="file" name="image">
                 <input class="button" type="submit" />
             </form>
             <hr>
@@ -54,8 +57,8 @@
                 <option value="content-asc">Alphabetical by Comment</option>
                 <option value="name-asc">Alphabetical by Name</option>
             </select>
-            <button class="button" id="delete-button" type="submit" onclick="deletePosts();">Delete All Comments</button>
-            <div id="data-container"></div>
+            <button class="button" id="delete-button" type="submit" onclick="deletePosts();" display="none">Delete All Comments</button>
+            <div id="data-container"></div>          
         </div>
     </div>
   </body>

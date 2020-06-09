@@ -29,6 +29,19 @@ import java.util.List;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import java.net.MalformedURLException;
+import java.net.URL;
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
+import java.util.Map;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
@@ -49,8 +62,10 @@ public class CommentServlet extends HttpServlet {
       String name = (String) entity.getProperty("name");
       long id = entity.getKey().getId();
       String emoji = (String) entity.getProperty("emoji");
+      String email = (String) entity.getProperty("email");
+      String image = (String) entity.getProperty("image");
 
-      Comment comment = new Comment(content, time, name, 0, id, emoji);
+      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image);
       comments.add(comment);
     }
 
@@ -63,13 +78,25 @@ public class CommentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get parameters andcreate a new entity
+    UserService userService = UserServiceFactory.getUserService();
+
+    // Only logged-in users can post messages
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/comments.html");
+      return;
+    }
+
+    String email = userService.getCurrentUser().getEmail();
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
     String emoji = request.getParameter("emoji");
-    service.createNewComment(content, name, currentTime, emoji);
+    
+    // Get the URL of the image that the user uploaded to Blobstore.
+    String imageUrl = getUploadedFileUrl(request, "image");
+    service.createNewComment(content, name, currentTime, emoji, email, imageUrl);
 
-    response.sendRedirect("comments.html");
+    response.sendRedirect("/comments.html");
   }
  
   /**
@@ -79,5 +106,43 @@ public class CommentServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
+  }
+
+  /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
+  private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+    List<BlobKey> blobKeys = blobs.get("image");
+
+    // User submitted form without selecting a file, so we can't get a URL. (dev server)
+    if (blobKeys == null || blobKeys.isEmpty()) {
+      return null;
+    }
+
+    // Our form only contains a single file input, so get the first index.
+    BlobKey blobKey = blobKeys.get(0);
+
+    // User submitted form without selecting a file, so we can't get a URL. (live server)
+    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+    if (blobInfo.getSize() == 0) {
+      blobstoreService.delete(blobKey);
+      return null;
+    }
+
+    // We could check the validity of the file here, e.g. to make sure it's an image file
+    // https://stackoverflow.com/q/10779564/873165
+
+    // Use ImagesService to get a URL that points to the uploaded file.
+    ImagesService imagesService = ImagesServiceFactory.getImagesService();
+    ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
+
+    // To support running in Google Cloud Shell with AppEngine's devserver, we must use the relative
+    // path to the image, rather than the path returned by imagesService which contains a host.
+    try {
+      URL url = new URL(imagesService.getServingUrl(options));
+      return url.getPath();
+    } catch (MalformedURLException e) {
+      return imagesService.getServingUrl(options);
+    }
   }
 }

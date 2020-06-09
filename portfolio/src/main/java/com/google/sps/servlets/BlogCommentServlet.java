@@ -33,6 +33,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that returns comments under the respective blog posts*/
 @WebServlet("blog-comment")
@@ -55,8 +57,9 @@ public class BlogCommentServlet extends HttpServlet {
       long postId = (Long) entity.getProperty("postid");
       long commentId = (Long) entity.getKey().getId();
       String emoji = (String) entity.getProperty("emoji");
+      String email = (String) entity.getProperty("email");
 
-      Comment comment = new Comment(content, time, name, postId, commentId, emoji);
+      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, "");
       comments.add(comment);
     }
 
@@ -69,14 +72,23 @@ public class BlogCommentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get parameters and create a new entity
+    UserService userService = UserServiceFactory.getUserService();
+
+    // Only logged-in users can post messages
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/comments.html");
+      return;
+    }
+
+    String email = userService.getCurrentUser().getEmail();
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
     int id = Integer.parseInt(request.getParameter("id"));
     String emoji = request.getParameter("emoji");
 
-    service.createNewComment(content, id, currentTime, name, emoji);
-    response.sendRedirect("blog.html");
+    service.createNewComment(content, id, currentTime, name, emoji, email);
+    response.sendRedirect("/blog.html");
   }
  
   /**

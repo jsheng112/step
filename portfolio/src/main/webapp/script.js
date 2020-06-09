@@ -285,6 +285,10 @@ function createDivElement(comment, isBlogComment) {
   pElementEmoji.innerText = comment.emoji;
   divElement.appendChild(pElementEmoji);
 
+  const imgElement = document.createElement('a');
+  imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
+  divElement.appendChild(imgElement);
+
   const pElementDate = document.createElement('p');
   pElementDate.innerText = comment.date;
   divElement.appendChild(pElementDate);
@@ -340,4 +344,57 @@ function deletePosts() {
       createDivElement(data[i]));
     }
   });
+}
+
+/** checks whether the user is authenticated and adjust elements 
+according to whether the user is logged in or logged out */
+function checkAuth(redirect){
+  // send request for information on login status
+  fetch('auth?redirect=' + redirect).then(response => response.json()).then((data) => {
+    const commentDivElement = document.getElementById('auth-container');
+    const hElement = document.createElement('h1');
+    const navElement = document.getElementById("nav");
+    const liElement = document.createElement('li');
+    const aElement = document.createElement("a");
+    
+    // adjust visibility and login/logout button according to 
+    // whether user is logged in or not
+    if (data["user"] != "Stranger") {
+      hElement.innerHTML = "Hello " + data["user"];
+      document.getElementById("comment-form").style.display = "block";
+      document.getElementById("delete-button").style.display = "block";
+      aElement.href = data["url"];
+      aElement.innerText = "Logout";
+      liElement.appendChild(aElement);
+      
+    
+    } else {
+      hElement.innerHTML = "Hello! Please login to post a comment";
+      document.getElementById("comment-form").style.display = "none";
+      document.getElementById("delete-button").style.display = "none";
+      aElement.href = data["url"];
+      aElement.innerText = "Login";
+      liElement.appendChild(aElement);
+    }
+    commentDivElement.appendChild(hElement);
+    navElement.appendChild(liElement);
+    
+  });
+}
+
+function fetchBlobstoreUrl() {
+  fetch('/blobstore-upload-url')
+      .then((response) => {
+        return response.text();
+      })
+      .then((imageUploadUrl) => {
+        const messageForm = document.getElementById('comment-form');
+        messageForm.action = imageUploadUrl;
+      });
+}
+
+function init(page) {
+    setColor();
+    loadPosts();
+    checkAuth(page);
 }

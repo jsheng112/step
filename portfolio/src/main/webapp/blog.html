@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body onload="setColor();loadPosts();">
+<body onload="init('blog')">
     <nav>
-        <ul>
+        <ul id="nav">
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="projects.html">Projects</a></li>
@@ -141,8 +141,9 @@
                             capstone final project will be one that makes a difference in the world.</p>
                     </div>
                     <div class="right-post-panel post-comments" id="comment-container">
-                        <h4>Leave your Comments Below</h4>
-                        <form action="blog-comment" method="POST">
+                        <div id="auth-container"></div>
+                        <form id="comment-form" action="blog-comment" method="POST" display="none">
+                            <h4>Leave your Comments Below</h4>
                             <label class="label">Name</label>
                             <input class="contact" type="text" name="name" required></input>
                             <label class="label">Comment</label>
@@ -160,6 +161,8 @@
                                 <option value="&#128079">&#128079</option>
                                 <option value="&#128075">&#128075</option>
                             </select>
+                            <label class="label">Upload an image:</label>
+                            <input class="contact upload" id="image-upload" type="file" name="image"/>
                             <input class="button" type="submit" />
                         </form>
                         <hr/>
