@@ -44,7 +44,7 @@ import com.google.appengine.api.images.ServingUrlOptions;
 import java.util.Map;
  
 /** Servlet that returns comments*/
-@WebServlet("data")
+@WebServlet("/data")
 public class CommentServlet extends HttpServlet {
   private CommentService service = new CommentService();
 
@@ -64,6 +64,7 @@ public class CommentServlet extends HttpServlet {
       String emoji = (String) entity.getProperty("emoji");
       String email = (String) entity.getProperty("email");
       String image = (String) entity.getProperty("image");
+      System.out.println("IMAGE URLLLLLLLL: " + image);
 
       Comment comment = new Comment(content, time, name, 0, id, emoji, email, image);
       comments.add(comment);
@@ -90,7 +91,7 @@ public class CommentServlet extends HttpServlet {
     String content = request.getParameter("comment");
     String name = request.getParameter("name");
     Date currentTime = new Date();
-    String emoji = request.getParameter("emoji");
+    String emoji = "";
     
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = getUploadedFileUrl(request, "image");

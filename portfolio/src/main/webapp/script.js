@@ -257,7 +257,7 @@ function getComment() {
   }
   sort = document.getElementById("sort").value;
 
-  fetch('data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
+  fetch('/data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = false;
@@ -281,12 +281,13 @@ function createDivElement(comment, isBlogComment) {
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
  
-  const pElementEmoji = document.createElement('p');
-  pElementEmoji.innerText = comment.emoji;
-  divElement.appendChild(pElementEmoji);
+//   const pElementEmoji = document.createElement('p');
+//   pElementEmoji.innerText = comment.emoji;
+//   divElement.appendChild(pElementEmoji);
 
   const imgElement = document.createElement('a');
-  imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
+  if (comment.image != null)
+    imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
   divElement.appendChild(imgElement);
 
   const pElementDate = document.createElement('p');

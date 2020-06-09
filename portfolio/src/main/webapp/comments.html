@@ -23,13 +23,13 @@
     <div id="container">
         <div id="comment-container">
             <div id="auth-container"></div>
-            <form id="comment-form" action="data" method="POST" display="none" >
+            <form id="comment-form" method="POST" display="none" enctype="multipart/form-data">
                 <h1>Leave your Comments Below</h1>
                 <label class="label">Name</label>
                 <input class="contact" type="text" name="name" required></input>
                 <label class="label">Comment</label>
                 <input class="contact" type="text" name="comment" required></input>
-                <label class="label" id="emoji-label">Emoji</label>
+                <!-- <label class="label" id="emoji-label">Emoji</label>
                 <select class="contact emoji" type="text" name="emoji">
                     <option value=""></option>
                     <option value="&#128512">&#128512</option>
@@ -40,9 +40,9 @@
                     <option value="&#128078">&#128078</option>
                     <option value="&#128079">&#128079</option>
                     <option value="&#128075">&#128075</option>
-                </select>
+                </select> -->
                 <label class="label">Upload an image:</label>
-                <input class="contact upload" type="file" name="image">
+                <input class="contact upload" type="file" name="image"/>
                 <input class="button" type="submit" />
             </form>
             <hr>
