@@ -29,24 +29,23 @@ public class AuthenticationServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
 
     // get the correct link to redirect to
     String redirect = request.getParameter("redirect");
 
     UserService userService = UserServiceFactory.getUserService();
-    String[] result = new String[2];
+    Map<String, String> result = new HashMap<String, String>();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/" + redirect + ".html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-      result[0] = userEmail;
-      result[1] = logoutUrl;
+      result.put("user", userEmail);
+      result.put("url", logoutUrl);
     } else {
       String urlToRedirectToAfterUserLogsIn = "/" + redirect + ".html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      result[0] = "Stranger";
-      result[1] = loginUrl;
+      result.put("user", "Stranger");
+      result.put("url", loginUrl);
     }
     // Send the JSON as the response
     String json = convertToJson(result);
@@ -54,9 +53,9 @@ public class AuthenticationServlet extends HttpServlet {
     response.getWriter().println(json);
   }
   /**
-   * Converts a String array instance into a JSON string using the Gson library. 
+   * Converts a String Map instance into a JSON string using the Gson library. 
    */
-  private String convertToJson(String[] s) {
+  private String convertToJson(Map<String, String> s) {
     Gson gson = new Gson();
     String json = gson.toJson(s);
     return json;

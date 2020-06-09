@@ -355,21 +355,26 @@ function checkAuth(redirect){
     const hElement = document.createElement('h1');
     const navElement = document.getElementById("nav");
     const liElement = document.createElement('li');
+    const aElement = document.createElement("a");
     
     // adjust visibility and login/logout button according to 
     // whether user is logged in or not
-    if (data[0] != "Stranger") {
-      hElement.innerHTML = "Hello " + data[0];
+    if (data["user"] != "Stranger") {
+      hElement.innerHTML = "Hello " + data["user"];
       document.getElementById("comment-form").style.display = "block";
       document.getElementById("delete-button").style.display = "block";
-      liElement.innerHTML = "<a href=\"" + data[1] + "\">Logout</a>";
+      aElement.href = data["url"];
+      aElement.innerText = "Logout";
+      liElement.appendChild(aElement);
       
     
     } else {
       hElement.innerHTML = "Hello! Please login to post a comment";
       document.getElementById("comment-form").style.display = "none";
       document.getElementById("delete-button").style.display = "none";
-      liElement.innerHTML = "<a href=\"" + data[1] + "\">Login</a>";
+      aElement.href = data["url"];
+      aElement.innerText = "Login";
+      liElement.appendChild(aElement);
     }
     commentDivElement.appendChild(hElement);
     navElement.appendChild(liElement);
