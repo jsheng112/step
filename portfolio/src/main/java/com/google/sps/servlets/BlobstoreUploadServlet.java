@@ -32,10 +32,19 @@ public class BlobstoreUploadServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String page = request.getParameter("page");
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    String uploadUrl = blobstoreService.createUploadUrl("/data");
 
-    response.setContentType("text/html");
-    response.getWriter().println(uploadUrl);
+    // determine which url to generate based on the page passed in
+    if (page.equals("comments")) {
+        String uploadUrl = blobstoreService.createUploadUrl("/data");
+        response.setContentType("text/html");
+        response.getWriter().println(uploadUrl);
+    } else {
+        String uploadUrl = blobstoreService.createUploadUrl("/blog-comment");
+        response.setContentType("text/html");
+        response.getWriter().println(uploadUrl);
+    }
+    
   }
 }

@@ -87,7 +87,7 @@ public class BlogCommentService {
     }
 
     /* create a new PostComment entity with the fields provided */
-    public void createNewComment(String content, int id, Date currentTime, String name, String emoji, String email) {
+    public void createNewComment(String content, int id, Date currentTime, String name, String emoji, String email, String image) {
       Entity newPostComment =  new Entity("PostComment");
       newPostComment.setProperty("content", content);
       newPostComment.setProperty("postid", id);
@@ -95,6 +95,7 @@ public class BlogCommentService {
       newPostComment.setProperty("name", name);
       newPostComment.setProperty("emoji", emoji);
       newPostComment.setProperty("email", email);
+      newPostComment.setProperty("image", image);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(newPostComment);

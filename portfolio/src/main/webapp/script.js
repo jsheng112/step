@@ -257,7 +257,7 @@ function getComment() {
   }
   sort = document.getElementById("sort").value;
 
-  fetch('/data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
+  fetch('data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = false;
@@ -281,9 +281,9 @@ function createDivElement(comment, isBlogComment) {
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
  
-//   const pElementEmoji = document.createElement('p');
-//   pElementEmoji.innerText = comment.emoji;
-//   divElement.appendChild(pElementEmoji);
+  const pElementEmoji = document.createElement('p');
+  pElementEmoji.innerText = comment.emoji;
+  divElement.appendChild(pElementEmoji);
 
   const imgElement = document.createElement('a');
   if (comment.image != null)
@@ -383,19 +383,24 @@ function checkAuth(redirect){
   });
 }
 
-function fetchBlobstoreUrl() {
-  fetch('/blobstore-upload-url')
-      .then((response) => {
-        return response.text();
-      })
-      .then((imageUploadUrl) => {
-        const messageForm = document.getElementById('comment-form');
-        messageForm.action = imageUploadUrl;
-      });
+function fetchBlobstoreUrl(page) {
+    fetch('/blobstore-upload-url?page=' + page)
+        .then((response) => {
+            return response.text();
+        })
+        .then((imageUploadUrl) => {
+            const messageForm = document.getElementById('comment-form');
+            messageForm.action = imageUploadUrl;
+        });
 }
 
 function init(page) {
     setColor();
-    loadPosts();
     checkAuth(page);
+    fetchBlobstoreUrl(page);
+    if(page == "comments")
+        getComment();
+    else
+        loadPosts();
+        
 }
