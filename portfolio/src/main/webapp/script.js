@@ -280,6 +280,10 @@ function createDivElement(comment, isBlogComment) {
   const pElement = document.createElement('p');
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
+
+  const pElementScore = document.createElement('p');
+  pElementScore.innerText = "Sentiment score: " + comment.score;
+  divElement.appendChild(pElementScore);
  
   const pElementEmoji = document.createElement('p');
   pElementEmoji.innerText = comment.emoji;

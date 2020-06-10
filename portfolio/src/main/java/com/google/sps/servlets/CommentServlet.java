@@ -42,6 +42,9 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import java.util.Map;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
@@ -64,8 +67,9 @@ public class CommentServlet extends HttpServlet {
       String emoji = (String) entity.getProperty("emoji");
       String email = (String) entity.getProperty("email");
       String image = (String) entity.getProperty("image");
+      double score = (Double) entity.getProperty("score");
 
-      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image);
+      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image, score);
       comments.add(comment);
     }
 
@@ -93,7 +97,8 @@ public class CommentServlet extends HttpServlet {
     String emoji = request.getParameter("emoji");
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = getUploadedFileUrl(request, "image");
-    service.createNewComment(content, name, currentTime, emoji, email, imageUrl);
+    float score = getSentimentScore(content);
+    service.createNewComment(content, name, currentTime, emoji, email, imageUrl, score);
 
     response.sendRedirect("/comments.html");
   }
@@ -143,5 +148,23 @@ public class CommentServlet extends HttpServlet {
     } catch (MalformedURLException e) {
       return imagesService.getServingUrl(options);
     }
+  }
+  
+  /* returns the sentiment score of the message */
+  private float getSentimentScore(String message) {
+    
+    try {
+      Document doc = Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+      LanguageServiceClient languageService = LanguageServiceClient.create();
+      
+      Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+      float score = sentiment.getScore();
+      languageService.close();
+      return score;
+    }
+    catch(IOException e) {
+      e.printStackTrace();
+    }
+    return 0;
   }
 }

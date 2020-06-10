@@ -71,7 +71,7 @@ public class BlogCommentServlet extends HttpServlet {
       String email = (String) entity.getProperty("email");
       String image = (String) entity.getProperty("image");
 
-      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, image);
+      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, image, 0);
       comments.add(comment);
     }
 

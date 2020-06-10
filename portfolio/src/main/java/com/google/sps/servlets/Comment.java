@@ -11,8 +11,9 @@ public class Comment {
     private String emoji; /* optional emoji */
     private String email;
     private String image;
+    private double score; /* comment sentiment analysis score */
     
-    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount, String imageUrl) {
+    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount, String imageUrl, double sentimentScore) {
         comment = content;
         date = d;
         name = n;
@@ -21,5 +22,6 @@ public class Comment {
         emoji = e;
         email = emailAccount;
         image = imageUrl;
+        score = sentimentScore;
     }
 }

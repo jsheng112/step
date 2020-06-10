@@ -42,7 +42,7 @@ public class BlobstoreUploadServlet extends HttpServlet {
     } else {
         endpoint = "/blog-comment";
     }
-    String uploadUrl = blobstoreService.createUploadUrl("/blog-comment");
+    String uploadUrl = blobstoreService.createUploadUrl(endpoint);
     response.setContentType("text/html");
     response.getWriter().println(uploadUrl);
     
