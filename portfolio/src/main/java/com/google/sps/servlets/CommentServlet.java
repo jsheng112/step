@@ -45,6 +45,9 @@ import java.util.Map;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.language.v1.ClassifyTextRequest;
+import com.google.cloud.language.v1.ClassifyTextResponse;
+import com.google.cloud.language.v1.ClassificationCategory;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
@@ -68,8 +71,9 @@ public class CommentServlet extends HttpServlet {
       String email = (String) entity.getProperty("email");
       String image = (String) entity.getProperty("image");
       double score = (Double) entity.getProperty("score");
+      String classification = (String) entity.getProperty("classification");
 
-      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image, score);
+      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image, score, classification);
       comments.add(comment);
     }
 
@@ -98,7 +102,8 @@ public class CommentServlet extends HttpServlet {
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = getUploadedFileUrl(request, "image");
     float score = getSentimentScore(content);
-    service.createNewComment(content, name, currentTime, emoji, email, imageUrl, score);
+    String classification = classifyContent(content);
+    service.createNewComment(content, name, currentTime, emoji, email, imageUrl, score, classification);
 
     response.sendRedirect("/comments.html");
   }
@@ -166,5 +171,35 @@ public class CommentServlet extends HttpServlet {
       e.printStackTrace();
     }
     return 0;
+  }
+
+  /* returns the content classifications of the message */
+  private String classifyContent(String message) {
+    
+    try {
+      // content classification only works for 20+ words
+      int length = message.split(" ").length;
+      if (length > 20) {
+        Document doc = Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+        LanguageServiceClient languageService = LanguageServiceClient.create();
+        
+        ClassifyTextRequest request = ClassifyTextRequest.newBuilder().setDocument(doc).build();
+        // detect categories in the given text
+        ClassifyTextResponse response = languageService.classifyText(request);
+        StringBuilder sb = new StringBuilder();
+        for (ClassificationCategory category : response.getCategoriesList()) {
+            sb.append(
+                "Category name: " + category.getName() + ", Confidence: " + category.getConfidence() + "\n");
+        }
+        return sb.toString();
+      }
+      else {
+        return "";
+      }
+    }
+    catch(IOException e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 }

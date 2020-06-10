@@ -78,7 +78,7 @@ public class CommentService {
     }
 
     /* create a new Comment entity with the fields provided */
-    public void createNewComment(String content, String name, Date currentTime, String emoji, String email, String image, float score) {
+    public void createNewComment(String content, String name, Date currentTime, String emoji, String email, String image, float score, String classification) {
         Entity newComment =  new Entity("Comment");
         newComment.setProperty("content", content);
         newComment.setProperty("time", currentTime);
@@ -87,6 +87,7 @@ public class CommentService {
         newComment.setProperty("email", email);
         newComment.setProperty("image", image);
         newComment.setProperty("score", score);
+        newComment.setProperty("classification", classification);
     
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(newComment);

@@ -4,6 +4,7 @@ indexes:
   properties:
   - name: postid
   - name: time
+    direction: desc
 - kind: PostComment
   ancestor: no
   properties:

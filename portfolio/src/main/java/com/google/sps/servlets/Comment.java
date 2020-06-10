@@ -12,8 +12,9 @@ public class Comment {
     private String email;
     private String image;
     private double score; /* comment sentiment analysis score */
+    private String classification;
     
-    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount, String imageUrl, double sentimentScore) {
+    public Comment(String content, Date d, String n, long p, long idNum, String e, String emailAccount, String imageUrl, double sentimentScore, String c) {
         comment = content;
         date = d;
         name = n;
@@ -23,5 +24,6 @@ public class Comment {
         email = emailAccount;
         image = imageUrl;
         score = sentimentScore;
+        classification = c;
     }
 }

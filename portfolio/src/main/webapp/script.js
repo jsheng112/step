@@ -280,15 +280,19 @@ function createDivElement(comment, isBlogComment) {
   const pElement = document.createElement('p');
   pElement.innerText = comment.comment;
   divElement.appendChild(pElement);
-
-  const pElementScore = document.createElement('p');
-  pElementScore.innerText = "Sentiment score: " + comment.score;
-  divElement.appendChild(pElementScore);
  
   const pElementEmoji = document.createElement('p');
   pElementEmoji.innerText = comment.emoji;
   divElement.appendChild(pElementEmoji);
 
+  const pElementScore = document.createElement('p');
+  pElementScore.innerText = "Sentiment score: " + comment.score;
+  divElement.appendChild(pElementScore);
+
+  const pElementClass = document.createElement('p');
+  pElementClass.innerText = comment.classification;
+  divElement.appendChild(pElementClass);
+  
   const imgElement = document.createElement('a');
   if (comment.image != null)
     imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
