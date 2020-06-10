@@ -38,7 +38,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 /** Servlet that deletes all blog comments for a specific blog post in datastore */
 @WebServlet("delete-blog-comments")
 public class DeleteBlogCommentsServlet extends HttpServlet {
-  private BlogCommentService service = new BlogCommentService();
+  private CommentService service = new CommentService();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -50,11 +50,11 @@ public class DeleteBlogCommentsServlet extends HttpServlet {
 
     int count;
     if (commentId == null) {
-      List<Entity> results = service.findAllComments(num, id, sort);
+      List<Entity> results = service.findAllComments(num, id, sort, true);
       count = service.deleteAll(results.toArray(new Entity[0]));
     } else {
       long commentIdParsed = Long.parseLong(commentId);
-      count = service.delete(commentIdParsed);
+      count = service.delete(commentIdParsed, true);
     }
 
     // Send the number of comments deleted as the response

@@ -49,9 +49,9 @@ public class DeleteCommentsServlet extends HttpServlet {
 
     if (commentId != null) {
       long id = Long.parseLong(commentId);
-      count = service.delete(id);
+      count = service.delete(id, false);
     } else {
-      List<Entity> results = service.findAllComments(num, sort);
+      List<Entity> results = service.findAllComments(num, 0, sort, false);
       count = service.deleteAll(results.toArray(new Entity[0]));
     }
 

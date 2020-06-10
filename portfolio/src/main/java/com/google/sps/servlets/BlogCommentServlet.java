@@ -56,7 +56,7 @@ import com.google.cloud.language.v1.ClassificationCategory;
 /** Servlet that returns comments under the respective blog posts*/
 @WebServlet("blog-comment")
 public class BlogCommentServlet extends HttpServlet {
-  private BlogCommentService service = new BlogCommentService();
+  private CommentService service = new CommentService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -65,7 +65,7 @@ public class BlogCommentServlet extends HttpServlet {
     String sort = request.getParameter("sort");
 
     // get each result from datastore and generate comments 
-    List<Entity> results = service.findAllComments(num, id, sort);
+    List<Entity> results = service.findAllComments(num, id, sort, true);
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for (Entity entity : results) {
       String content = (String) entity.getProperty("content");
@@ -108,11 +108,11 @@ public class BlogCommentServlet extends HttpServlet {
     String emoji = request.getParameter("emoji");
 
     // Get the URL of the image that the user uploaded to Blobstore.
-    String image = getUploadedFileUrl(request, "image");
-    float score = getSentimentScore(content);
-    String classification = classifyContent(content);
+    String image = service.getUploadedFileUrl(request, "image");
+    float score = service.getSentimentScore(content);
+    String classification = service.classifyContent(content);
 
-    service.createNewComment(content, id, currentTime, name, emoji, email, image, score, classification);
+    service.createNewComment(true, content, id, name, currentTime, emoji, email, image, score, classification);
     response.sendRedirect("/blog.html");
   }
  
