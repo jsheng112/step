@@ -286,7 +286,8 @@ function createDivElement(comment, isBlogComment) {
   divElement.appendChild(pElementEmoji);
 
   const imgElement = document.createElement('a');
-  imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
+  if (comment.image != null)
+    imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
   divElement.appendChild(imgElement);
 
   const pElementDate = document.createElement('p');
@@ -382,19 +383,24 @@ function checkAuth(redirect){
   });
 }
 
-function fetchBlobstoreUrl() {
-  fetch('/blobstore-upload-url')
-      .then((response) => {
-        return response.text();
-      })
-      .then((imageUploadUrl) => {
-        const messageForm = document.getElementById('comment-form');
-        messageForm.action = imageUploadUrl;
-      });
+function fetchBlobstoreUrl(page) {
+    fetch('/blobstore-upload-url?page=' + page)
+        .then((response) => {
+            return response.text();
+        })
+        .then((imageUploadUrl) => {
+            const messageForm = document.getElementById('comment-form');
+            messageForm.action = imageUploadUrl;
+        });
 }
 
 function init(page) {
     setColor();
-    loadPosts();
     checkAuth(page);
+    fetchBlobstoreUrl(page);
+    if(page == "comments")
+        getComment();
+    else
+        loadPosts();
+        
 }

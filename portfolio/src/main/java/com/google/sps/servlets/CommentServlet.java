@@ -91,7 +91,6 @@ public class CommentServlet extends HttpServlet {
     String name = request.getParameter("name");
     Date currentTime = new Date();
     String emoji = request.getParameter("emoji");
-    
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = getUploadedFileUrl(request, "image");
     service.createNewComment(content, name, currentTime, emoji, email, imageUrl);
