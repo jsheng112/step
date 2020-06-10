@@ -46,6 +46,9 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import java.util.Map;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 
 /** Servlet that returns comments under the respective blog posts*/
 @WebServlet("blog-comment")
@@ -70,8 +73,9 @@ public class BlogCommentServlet extends HttpServlet {
       String emoji = (String) entity.getProperty("emoji");
       String email = (String) entity.getProperty("email");
       String image = (String) entity.getProperty("image");
+      double score = (Double) entity.getProperty("score");
 
-      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, image, 0);
+      Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, image, score);
       comments.add(comment);
     }
 
@@ -101,8 +105,9 @@ public class BlogCommentServlet extends HttpServlet {
 
     // Get the URL of the image that the user uploaded to Blobstore.
     String image = getUploadedFileUrl(request, "image");
+    float score = getSentimentScore(content);
 
-    service.createNewComment(content, id, currentTime, name, emoji, email, image);
+    service.createNewComment(content, id, currentTime, name, emoji, email, image, score);
     response.sendRedirect("/blog.html");
   }
  
@@ -151,6 +156,24 @@ public class BlogCommentServlet extends HttpServlet {
     } catch (MalformedURLException e) {
       return imagesService.getServingUrl(options);
     }
+  }
+
+  /* returns the sentiment score of the message */
+  private float getSentimentScore(String message) {
+    
+    try {
+      Document doc = Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+      LanguageServiceClient languageService = LanguageServiceClient.create();
+      
+      Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+      float score = sentiment.getScore();
+      languageService.close();
+      return score;
+    }
+    catch(IOException e) {
+      e.printStackTrace();
+    }
+    return 0;
   }
 }
 
