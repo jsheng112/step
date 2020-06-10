@@ -398,9 +398,9 @@ function init(page) {
     setColor();
     checkAuth(page);
     fetchBlobstoreUrl(page);
-    if(page == "comments")
+    if (page == "comments") {
         getComment();
-    else
+    } else {
         loadPosts();
-        
+    }  
 }
