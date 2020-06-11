@@ -38,9 +38,9 @@ public class BlobstoreUploadServlet extends HttpServlet {
     // determine which url to generate based on the page passed in
     String endpoint = null;
     if (page.equals("comments")) {
-        endpoint = "/data";
+        endpoint = "/data?is-blog=false&action=post";
     } else {
-        endpoint = "/blog-comment";
+        endpoint = "/data?is-blog=true&action=post";
     }
     String uploadUrl = blobstoreService.createUploadUrl(endpoint);
     response.setContentType("text/html");

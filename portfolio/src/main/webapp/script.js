@@ -87,7 +87,7 @@ function getPostComments() {
   const id = document.getElementById("id").value;
   sort = document.getElementById("sort").value;
   /** get the comments for this specific blog post */
-  fetch('blog-comment?num=' + num + "&id=" + id + '&sort=' + sort).then(response => response.json()).then((data) => {
+  fetch('data?is-blog=true&num=' + num + "&id=" + id + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = true;
@@ -102,7 +102,7 @@ function getPostComments() {
 function deleteSpecificBlogComment(commentId) {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
-  const request = new Request('blog-comment?action=delete&id=' + id + "&commentId=" + commentId, {method: 'POST'});
+  const request = new Request('data?is-blog=true&action=delete&id=' + id + "&commentId=" + commentId, {method: 'POST'});
   var num = -1;
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
@@ -110,7 +110,7 @@ function deleteSpecificBlogComment(commentId) {
 
   sort = document.getElementById("sort").value;
   // after POST returns response, create a GET request to get the data again
-  fetch(request).then(response => fetch('blog-comment?num=' + num + '&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('data?is-blog=true&num=' + num + '&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -125,12 +125,12 @@ function deleteSpecificBlogComment(commentId) {
 function deleteBlogComments() {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
-  const request = new Request('blog-comment?action=delete&id=' + id, {method: 'POST'});
+  const request = new Request('data?is-blog=true&action=delete&id=' + id, {method: 'POST'});
 
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
   sort = document.getElementById("sort").value;
-  fetch(request).then(response => fetch('blog-comment?num=0&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('data?is-blog=true&num=0&id=' + id + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -257,7 +257,7 @@ function getComment() {
   }
   sort = document.getElementById("sort").value;
 
-  fetch('data?num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
+  fetch('data?is-blog=false&num=' + num + '&sort=' + sort).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
     commentDivElement.innerHTML = '';
     const isBlogComment = false;
@@ -316,7 +316,7 @@ function createDivElement(comment, isBlogComment) {
 /** deletes a comment with specific comment id */
 function deleteSpecificComment(commentId) {
   // create and send a POST request for deleting data
-  const request = new Request('data?action=delete&id=' + commentId, {method: 'POST'});
+  const request = new Request('data?is-blog=false&action=delete&id=' + commentId, {method: 'POST'});
   var num = -1;
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
@@ -324,7 +324,7 @@ function deleteSpecificComment(commentId) {
   
   // after POST returns response, create a GET request to get the data again
   sort = document.getElementById("sort").value;
-  fetch(request).then(response => fetch('data?num=' + num + "&sort=" + sort)).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('data?is-blog=false&num=' + num + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
@@ -339,12 +339,12 @@ function deleteSpecificComment(commentId) {
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data
-  const request = new Request('data?action=delete', {method: 'POST'});
+  const request = new Request('data?is-blog=false&action=delete', {method: 'POST'});
   
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
   sort = document.getElementById("sort").value;
-  fetch(request).then(response => fetch('data?num=0' + "&sort=" + sort)).then(response => response.json()).then((data) => {
+  fetch(request).then(response => fetch('data?is-blog=false&num=0' + "&sort=" + sort)).then(response => response.json()).then((data) => {
     const commentDivElement = document.getElementById('data-container');
 
     commentDivElement.innerHTML = '';
