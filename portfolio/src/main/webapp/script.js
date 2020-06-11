@@ -102,7 +102,7 @@ function getPostComments() {
 function deleteSpecificBlogComment(commentId) {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
-  const request = new Request('delete-blog-comments?id=' + id + "&commentId=" + commentId, {method: 'POST'});
+  const request = new Request('blog-comment?action=delete&id=' + id + "&commentId=" + commentId, {method: 'POST'});
   var num = -1;
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
@@ -125,7 +125,7 @@ function deleteSpecificBlogComment(commentId) {
 function deleteBlogComments() {
   // create and send a POST request for deleting data
   const id = document.getElementById("id").value;
-  const request = new Request('delete-blog-comments?id=' + id, {method: 'POST'});
+  const request = new Request('blog-comment?action=delete&id=' + id, {method: 'POST'});
 
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments
@@ -316,7 +316,7 @@ function createDivElement(comment, isBlogComment) {
 /** deletes a comment with specific comment id */
 function deleteSpecificComment(commentId) {
   // create and send a POST request for deleting data
-  const request = new Request('delete-data?id=' + commentId, {method: 'POST'});
+  const request = new Request('data?action=delete&id=' + commentId, {method: 'POST'});
   var num = -1;
   if (!(document.getElementById("showall").checked)) {
     num = document.getElementById("quantity").value;
@@ -339,7 +339,7 @@ function deleteSpecificComment(commentId) {
 /** deletes all posts upon clicking the button */
 function deletePosts() {
   // create and send a POST request for deleting data
-  const request = new Request('delete-data', {method: 'POST'});
+  const request = new Request('data?action=delete', {method: 'POST'});
   
   // after POST returns response, create a GET request to get the data again
   // which returns 0 comments

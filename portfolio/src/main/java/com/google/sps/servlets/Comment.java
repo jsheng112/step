@@ -26,4 +26,8 @@ public class Comment {
         score = sentimentScore;
         classification = c;
     }
+
+    public long getId() {
+        return id;
+    }
 }

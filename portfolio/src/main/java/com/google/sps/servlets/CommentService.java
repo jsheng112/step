@@ -39,6 +39,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.gson.Gson;
 
 /* a class with useful functions for comments */
 public class CommentService {
@@ -46,7 +47,7 @@ public class CommentService {
 
     /* find and return blog comments in descending order by time and return the 
     first num numbers */
-    public List<Entity> findAllComments(int num, int id, String sort, boolean isBlog) {
+    public ArrayList<Comment> findAllComments(int num, int id, String sort, boolean isBlog) {
       // create filter
       Filter keyFilter = new FilterPredicate("postid", FilterOperator.EQUAL, id);
 
@@ -68,18 +69,46 @@ public class CommentService {
         query.addSort("name", SortDirection.ASCENDING);
 
       PreparedQuery results = datastore.prepare(query);
+      List<Entity> resultsList;
       if (num == -1)
-        return results.asList(FetchOptions.Builder.withDefaults());
+        resultsList = results.asList(FetchOptions.Builder.withDefaults());
       else
-        return results.asList(FetchOptions.Builder.withLimit(num));
+        resultsList = results.asList(FetchOptions.Builder.withLimit(num));
+
+      // get each result from datastore and generate comments 
+      ArrayList<Comment> comments = new ArrayList<Comment>();
+      for (Entity entity : resultsList) {
+        String content = (String) entity.getProperty("content");
+        Date time = (Date) entity.getProperty("time");
+        String name = (String) entity.getProperty("name");
+        long postId = 0;
+        if (isBlog) {
+          postId = (Long) entity.getProperty("postid");
+        }
+        long commentId = (Long) entity.getKey().getId();
+        String emoji = (String) entity.getProperty("emoji");
+        String email = (String) entity.getProperty("email");
+        String image = (String) entity.getProperty("image");
+        double score = (Double) entity.getProperty("score");
+        String classification = (String) entity.getProperty("classification");
+        
+        Comment comment = new Comment(content, time, name, postId, commentId, emoji, email, image, score, classification);
+        comments.add(comment);
+      }
+      return comments;
     }
 
     /* delete all entities */
-    public int deleteAll(Entity... entities) {
+    public int deleteAll(ArrayList<Comment> comments,  boolean isBlog) {
         int count = 0;
         // get each result from datastore and delete comments 
-        for (Entity entity : entities) {
-            Key taskEntityKey = entity.getKey();
+        for (Comment comment : comments) {
+            Key taskEntityKey;
+            if (isBlog) {
+              taskEntityKey = KeyFactory.createKey("PostComment", comment.getId());
+            } else {
+              taskEntityKey = KeyFactory.createKey("Comment", comment.getId());
+            }
             datastore.delete(taskEntityKey);
             count++;
         }
@@ -124,6 +153,7 @@ public class CommentService {
     /** Returns a key for the uploaded file, or null if the user didn't upload a file. */
   public String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    // look at documentation for this, look for an overloaded method
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("image");
 
@@ -182,5 +212,14 @@ public class CommentService {
       e.printStackTrace();
     }
     return "";
+  }
+
+  /**
+   * Converts an ArrayList instance into a JSON string using the Gson library. 
+   */
+  public String convertToJson(ArrayList<Comment> comments) {
+    Gson gson = new Gson();
+    String json = gson.toJson(comments);
+    return json;
   }
 }

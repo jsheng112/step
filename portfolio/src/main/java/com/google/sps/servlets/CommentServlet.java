@@ -21,33 +21,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.Date;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import java.net.MalformedURLException;
-import java.net.URL;
-import com.google.appengine.api.blobstore.BlobInfo;
-import com.google.appengine.api.blobstore.BlobInfoFactory;
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
-import java.util.Map;
-import com.google.cloud.language.v1.Document;
-import com.google.cloud.language.v1.LanguageServiceClient;
-import com.google.cloud.language.v1.Sentiment;
-import com.google.cloud.language.v1.ClassifyTextRequest;
-import com.google.cloud.language.v1.ClassifyTextResponse;
-import com.google.cloud.language.v1.ClassificationCategory;
  
 /** Servlet that returns comments*/
 @WebServlet("data")
@@ -59,61 +37,58 @@ public class CommentServlet extends HttpServlet {
     int num = Integer.parseInt(request.getParameter("num")); // number of comments to return
     String sort = request.getParameter("sort");
 
-    // get each result from datastore and generate comments 
-    List<Entity> results = service.findAllComments(num, 0, sort, false);
-    ArrayList<Comment> comments = new ArrayList<Comment>();
-    for (Entity entity : results) {
-      String content = (String) entity.getProperty("content");
-      Date time = (Date) entity.getProperty("time");
-      String name = (String) entity.getProperty("name");
-      long id = entity.getKey().getId();
-      String emoji = (String) entity.getProperty("emoji");
-      String email = (String) entity.getProperty("email");
-      String image = (String) entity.getProperty("image");
-      double score = (Double) entity.getProperty("score");
-      String classification = (String) entity.getProperty("classification");
-
-      Comment comment = new Comment(content, time, name, 0, id, emoji, email, image, score, classification);
-      comments.add(comment);
-    }
+    // get each result from datastore and generate comments Z
+    ArrayList<Comment> comments = service.findAllComments(num, 0, sort, false);
 
     // Send the JSON as the response
-    String json = convertToJson(comments);
+    String json = service.convertToJson(comments);
     response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(json);
   }
  
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // get parameters andcreate a new entity
-    UserService userService = UserServiceFactory.getUserService();
+    String action = request.getParameter("action");
+    if (action == null ||!action.equals("delete")) {
+      // get parameters andcreate a new entity
+      UserService userService = UserServiceFactory.getUserService();
 
-    // Only logged-in users can post messages
-    if (!userService.isUserLoggedIn()) {
+      // Only logged-in users can post messages
+      if (!userService.isUserLoggedIn()) {
+        response.sendRedirect("/comments.html");
+        return;
+      }
+
+      String email = userService.getCurrentUser().getEmail();
+      String content = request.getParameter("comment");
+      String name = request.getParameter("name");
+      Date currentTime = new Date();
+      String emoji = request.getParameter("emoji");
+      // Get the URL of the image that the user uploaded to Blobstore.
+      String imageUrl = service.getUploadedFileUrl(request, "image");
+      float score = service.getSentimentScore(content);
+      String classification = service.classifyContent(content);
+      service.createNewComment(false, content, 0, name, currentTime, emoji, email, imageUrl, score, classification);
+
       response.sendRedirect("/comments.html");
-      return;
+    } else {
+      String commentId = request.getParameter("id");
+      int num = -1;
+      int count;
+      String sort = "time-desc";
+
+      if (commentId != null) {
+        long id = Long.parseLong(commentId);
+        count = service.delete(id, false);
+      } else {
+        ArrayList<Comment> results = service.findAllComments(num, 0, sort, false);
+        count = service.deleteAll(results, false);
+      }
+
+      // Send the number of comments deleted as the response
+      response.setContentType("application/json;");
+      response.getWriter().println(count);
     }
-
-    String email = userService.getCurrentUser().getEmail();
-    String content = request.getParameter("comment");
-    String name = request.getParameter("name");
-    Date currentTime = new Date();
-    String emoji = request.getParameter("emoji");
-    // Get the URL of the image that the user uploaded to Blobstore.
-    String imageUrl = service.getUploadedFileUrl(request, "image");
-    float score = service.getSentimentScore(content);
-    String classification = service.classifyContent(content);
-    service.createNewComment(false, content, 0, name, currentTime, emoji, email, imageUrl, score, classification);
-
-    response.sendRedirect("/comments.html");
   }
- 
-  /**
-   * Converts an ArrayList instance into a JSON string using the Gson library. 
-   */
-  private String convertToJson(ArrayList<Comment> comments) {
-    Gson gson = new Gson();
-    String json = gson.toJson(comments);
-    return json;
-  }
+
 }
