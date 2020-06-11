@@ -101,6 +101,8 @@ public class CommentServlet extends HttpServlet {
     String emoji = request.getParameter("emoji");
     // Get the URL of the image that the user uploaded to Blobstore.
     String imageUrl = service.getUploadedFileUrl(request, "image");
+    // float score = 0;
+    // String classification = "";
     float score = service.getSentimentScore(content);
     String classification = service.classifyContent(content);
     service.createNewComment(false, content, 0, name, currentTime, emoji, email, imageUrl, score, classification);

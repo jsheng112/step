@@ -198,9 +198,7 @@ public class CommentService {
         }
         return sb.toString();
       }
-      else {
-        return "";
-      }
+
     }
     catch(IOException e) {
       e.printStackTrace();
