@@ -293,9 +293,9 @@ function createDivElement(comment, isBlogComment) {
   pElementClass.innerText = comment.classification;
   divElement.appendChild(pElementClass);
   
-  const imgElement = document.createElement('a');
+  const imgElement = document.createElement('img');
   if (comment.image != null)
-    imgElement.innerHTML = "<a href=\"" + comment.image + "\"><img src=\"" + comment.image + "\" /></a>"
+    imgElement.src = "serve?blob-key=" + comment.image;
   divElement.appendChild(imgElement);
 
   const pElementDate = document.createElement('p');
