@@ -413,9 +413,14 @@ function init(page) {
     }  
 }
 
-/** Creates a map and adds it to the page. */
+/* These labels are for adding markers to
+the map so that when a click is made on the 
+map a red marker pops up with an alphabetical
+label */
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
+
+/** Creates a map and adds it to the page. */
 function createMap() {
   var ptonLatLng = {lat: 40.3431, lng: -74.6551};
   var googleLatLng = {lat: 40.740895, lng: -74.001974};
