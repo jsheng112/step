@@ -36,15 +36,15 @@ public class BlobstoreUploadServlet extends HttpServlet {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     // determine which url to generate based on the page passed in
+    String endpoint = null;
     if (page.equals("comments")) {
-        String uploadUrl = blobstoreService.createUploadUrl("/data");
-        response.setContentType("text/html");
-        response.getWriter().println(uploadUrl);
+        endpoint = "/data?is-blog=false&action=post";
     } else {
-        String uploadUrl = blobstoreService.createUploadUrl("/blog-comment");
-        response.setContentType("text/html");
-        response.getWriter().println(uploadUrl);
+        endpoint = "/data?is-blog=true&action=post";
     }
+    String uploadUrl = blobstoreService.createUploadUrl(endpoint);
+    response.setContentType("text/html");
+    response.getWriter().println(uploadUrl);
     
   }
 }
