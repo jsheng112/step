@@ -50,4 +50,14 @@ public final class GreeterTest {
     // symbols should be removed
     Assert.assertEquals("Hello Ada", greeting);
   }
+
+  @Test
+  public void testGreetingRemovesSymbols_ElenaBeingAnnoying() {
+    Greeter greeter = new Greeter();
+
+    String greeting = greeter.greet("   Ada^^_:  ");
+
+    // symbols should be removed
+    Assert.assertEquals("Hello Ada", greeting);
+  }
 }

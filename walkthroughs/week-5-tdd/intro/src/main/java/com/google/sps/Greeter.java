@@ -22,7 +22,7 @@ public class Greeter {
    * Returns a greeting for the given name.
    */
   public String greet(String name) {
-    String modified = name.replaceAll("[@#$%]", "");
+    String modified = name.replaceAll("[^(a-zA-Z)]", "");
     return "Hello " + modified.trim();
   }
 }
