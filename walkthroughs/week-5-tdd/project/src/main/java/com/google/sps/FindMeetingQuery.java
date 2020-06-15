@@ -28,61 +28,62 @@ public final class FindMeetingQuery {
     //  get a list of individuals we need to consider from request
     Collection<String> attendees = request.getAttendees();
     long duration = request.getDuration();
-    if (duration > TimeRange.END_OF_DAY - TimeRange.START_OF_DAY) {
+
+    // a meeting that is over a day long cannot be scheduled
+    if (duration > TimeRange.WHOLE_DAY.duration()) {
         return new ArrayList<TimeRange>();
     }
     
     // isolate the timeranges from events that pertain to those individuals
-    ArrayList<TimeRange> timeRanges = new ArrayList<TimeRange>();
+    ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>();
     for (Event e : events) {
         for (String a: e.getAttendees()) {
             if (attendees.contains(a)) {
-                timeRanges.add(e.getWhen());
+                busyTimeRanges.add(e.getWhen());
             }
         }
     }
 
     // find the TimeRanges that work:
     // first sort
-    Collections.sort(timeRanges, TimeRange.ORDER_BY_START);
-    System.out.println("after sorting: " + toString(timeRanges));
+    Collections.sort(busyTimeRanges, TimeRange.ORDER_BY_START);
     int i = 0;
-    while(i< timeRanges.size()) {
+    while (i< busyTimeRanges.size()) {
         // we are at the end of the list or there is no overlap between the current event and the next event
-        if (i == timeRanges.size()-1 || !timeRanges.get(i).overlaps(timeRanges.get(i+1))) {
+        if (i == busyTimeRanges.size()-1 || !busyTimeRanges.get(i).overlaps(busyTimeRanges.get(i+1))) {
             i++;
         } else {
         // there is an overlap so we remove both events and create a TimeRange that is the intersection of the two
-            TimeRange curr = timeRanges.remove(i);
-            TimeRange next = timeRanges.remove(i);
+            TimeRange curr = busyTimeRanges.remove(i);
+            TimeRange next = busyTimeRanges.remove(i);
 
             int start = Math.min(curr.start(), next.start());
             int end = Math.max(curr.end(), next.end());
-            timeRanges.add(i, TimeRange.fromStartEnd(start, end, false));
+            busyTimeRanges.add(i, TimeRange.fromStartEnd(start, end, false));
         }
     }
 
     // find the free part of the day and weed out time ranges thats too short
     ArrayList<TimeRange> result = new ArrayList<TimeRange>();
-    int endTime = TimeRange.START_OF_DAY; // end time of the last event we examined
+    int startTime = TimeRange.START_OF_DAY; // end time of the last event we examined
     
-    for (int k = 0; k < timeRanges.size(); k++) {
+    for (int k = 0; k < busyTimeRanges.size(); k++) {
         // case 1: first event of the day starts at the begining of the day
-        if (k ==0 && timeRanges.get(k).start() == TimeRange.START_OF_DAY){
-            endTime = timeRanges.get(k).end();
+        if (k ==0 && busyTimeRanges.get(k).start() == TimeRange.START_OF_DAY){
+            startTime = busyTimeRanges.get(k).end();
             continue;
         }
         // case 2:the normal case
-        int startTime = timeRanges.get(k).start();
-        if (startTime - endTime >= duration) {
-            result.add(TimeRange.fromStartEnd(endTime, startTime, false));     
+        int endTime = busyTimeRanges.get(k).start();
+        if (endTime - startTime >= duration) {
+            result.add(TimeRange.fromStartEnd(startTime, endTime, false));     
         } 
-        endTime = timeRanges.get(k).end();
+        startTime = busyTimeRanges.get(k).end();
     }
 
     // case 3: the final interval we need to consider at the end of the day
-    if (TimeRange.END_OF_DAY - endTime >= duration) {
-        result.add(TimeRange.fromStartEnd(endTime, TimeRange.END_OF_DAY, true));
+    if (TimeRange.END_OF_DAY - startTime >= duration) {
+        result.add(TimeRange.fromStartEnd(startTime, TimeRange.END_OF_DAY, true));
     }
     return result;
   }
