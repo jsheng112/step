@@ -467,6 +467,189 @@ public final class FindMeetingQueryTest {
     Assert.assertEquals(expected, actual);
   }
 
+  // tests for getIntersection() method
+  @Test
+  public void intersectionTwoEventsNoOverlap() {
+    // Events  : |--A-----| |-----B----|
+    // Day     : |--------| |----------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_0830AM, false),
+        TimeRange.fromStartEnd(TIME_0900AM, TIME_1000AM, false)));
+
+    Collection<TimeRange> actual = query.getIntersection(timeRanges);
+    Collection<TimeRange> expected = Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_0830AM, false),
+        TimeRange.fromStartEnd(TIME_0900AM, TIME_1000AM, false));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void intersectionTwoEventsOverlap() {
+    // Events  : |--A-----| 
+    //                 |-----B----|
+    // Day     : |----------------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_0900AM, false),
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_1100AM, false)));
+
+    Collection<TimeRange> actual = query.getIntersection((ArrayList<TimeRange>) timeRanges);
+    Collection<TimeRange> expected = Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_1100AM, false));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void intersectionTwoEventsOneContainsAnother() {
+    // Events  : |-------A--------| 
+    //                 |-----B---|
+    // Day     : |----------------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_1130AM, false),
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_1100AM, false)));
+
+    Collection<TimeRange> actual = query.getIntersection((ArrayList<TimeRange>) timeRanges);
+    Collection<TimeRange> expected = Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_1130AM, false));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void intersectionOneEvent() {
+    // Events  : |-------A--------| 
+    //                 |-----B---|
+    // Day     : |----------------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_1130AM, false)));
+
+    Collection<TimeRange> actual = query.getIntersection((ArrayList<TimeRange>) timeRanges);
+    Collection<TimeRange> expected = Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0800AM, TIME_1130AM, false));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void intersectionNoEvents() {
+    // Events  : |-------A--------| 
+    //                 |-----B---|
+    // Day     : |----------------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList());
+
+    Collection<TimeRange> actual = query.getIntersection((ArrayList<TimeRange>) timeRanges);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  // tests for getFreeTime()
+  @Test
+  public void freeTimesTwoEventsNoOverlap() {
+    // Events  : |--A-----| |-----B----|
+    // Day     : |--------| |----------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_0830AM, false),
+        TimeRange.fromStartEnd(TIME_0900AM, TIME_1000AM, false)));
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList(
+        TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0830AM, false),
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_0900AM, false),
+        TimeRange.fromStartEnd(TIME_1000AM, TimeRange.END_OF_DAY, true));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void freeTimesTwoEventsWholeDay() {
+    // Events  : |-------A----||-----B---|   
+    // Day     : ||
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_1130AM, false),
+        TimeRange.fromStartEnd(TIME_1130AM, TimeRange.END_OF_DAY, true)));
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void freeTimesTwoEventsOneStartAtTheBeginning() {
+    // Events  : |-------A----||-----B---|   
+    // Day     :                         |----|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_1130AM, false),
+        TimeRange.fromStartEnd(TIME_1130AM, TIME_1500PM, false)));
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList(TimeRange.fromStartEnd(TIME_1500PM, TimeRange.END_OF_DAY, true));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void freeTimesTwoEventsOneStartAtTheEnd() {
+    // Events  :      |-------A----||-----B---|   
+    // Day     : |----|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TIME_0830AM, TIME_1130AM, false),
+        TimeRange.fromStartEnd(TIME_1130AM, TimeRange.END_OF_DAY, true)));
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0830AM, false));
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void freeTimesOneEventWholeDay() {
+    // Events  : |-------A--------| 
+    // Day     : ||
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList(
+        TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TimeRange.END_OF_DAY, true)));
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void freeTimesNoEvents() {
+    // Events  : 
+    // Day     : |----------------|
+    // Options :
+
+    ArrayList<TimeRange> timeRanges = new ArrayList<>(Arrays.asList());
+
+    Collection<TimeRange> actual = query.getFreeTime(timeRanges, DURATION_30_MINUTES);
+    Collection<TimeRange> expected = Arrays.asList(TimeRange.WHOLE_DAY);
+
+    Assert.assertEquals(expected, actual);
+  }
 }
 
 
