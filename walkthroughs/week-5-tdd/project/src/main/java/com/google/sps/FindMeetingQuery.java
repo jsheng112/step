@@ -25,65 +25,102 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // throw new UnsupportedOperationException("TODO: Implement this method.");
 
-    //  get a list of individuals we need to consider from request
-    Collection<String> attendees = request.getAttendees();
     long duration = request.getDuration();
 
     // a meeting that is over a day long cannot be scheduled
     if (duration > TimeRange.WHOLE_DAY.duration()) {
-        return new ArrayList<TimeRange>();
-    }
-    
-    // isolate the timeranges from events that pertain to those individuals
-    ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>();
-    for (Event e : events) {
-        for (String a: e.getAttendees()) {
-            if (attendees.contains(a)) {
-                busyTimeRanges.add(e.getWhen());
-            }
-        }
+      return new ArrayList<TimeRange>();
     }
 
-    // find the TimeRanges that work:
-    // first sort
+    //  get a list of individuals we need to consider from request
+    Collection<String> attendees = request.getAttendees();
+    Collection<String> allAttendees = new ArrayList<String>();
+    for (String person : attendees) {
+        allAttendees.add(person);
+    }
+    for (String person : request.getOptionalAttendees()) {
+        allAttendees.add(person);
+    }
+
+    // isolate the timeranges from events that pertain to required and optional attendees
+    ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>();
+    ArrayList<TimeRange> allBusyTimeRanges = new ArrayList<TimeRange>();
+    for (Event e : events) {
+      for (String a: e.getAttendees()) {
+        if (attendees.contains(a)) {
+          busyTimeRanges.add(e.getWhen());
+        }
+        if (allAttendees.contains(a)) {
+          allBusyTimeRanges.add(e.getWhen());
+        }
+      }
+    }
+
+    // find the TimeRanges that work for employees:
+    // first sort then get the intersection
     Collections.sort(busyTimeRanges, TimeRange.ORDER_BY_START);
+    Collections.sort(allBusyTimeRanges, TimeRange.ORDER_BY_START);
+
+    busyTimeRanges = getIntersection(busyTimeRanges);
+    allBusyTimeRanges = getIntersection(allBusyTimeRanges);
+
+    ArrayList<TimeRange> result;
+    // if the intersection of all events for both mandatory and optional attendees take up the
+    // whole day then just get the free times for the mandatory people
+    if (allBusyTimeRanges.size() == 1 && allBusyTimeRanges.get(0).equals(TimeRange.WHOLE_DAY)) {
+      result = getFreeTime(busyTimeRanges, duration);
+    } else {
+      result = getFreeTime(allBusyTimeRanges, duration);
+      if (result.size() == 0) {
+        result = getFreeTime(busyTimeRanges, duration);
+      }
+    }
+    return result;
+  }
+
+  /* find the intersection of all the non-available time ranges */
+  public ArrayList<TimeRange> getIntersection(ArrayList<TimeRange> busyTimeRanges) {
     int i = 0;
     while (i< busyTimeRanges.size()) {
-        // we are at the end of the list or there is no overlap between the current event and the next event
-        if (i == busyTimeRanges.size()-1 || !busyTimeRanges.get(i).overlaps(busyTimeRanges.get(i+1))) {
-            i++;
-        } else {
+      // we are at the end of the list or there is no overlap between the current event and the next event
+      if (i == busyTimeRanges.size()-1 || !busyTimeRanges.get(i).overlaps(busyTimeRanges.get(i+1))) {
+        i++;
+      } else {
         // there is an overlap so we remove both events and create a TimeRange that is the intersection of the two
-            TimeRange curr = busyTimeRanges.remove(i);
-            TimeRange next = busyTimeRanges.remove(i);
+        TimeRange curr = busyTimeRanges.remove(i);
+        TimeRange next = busyTimeRanges.remove(i);
 
-            int start = Math.min(curr.start(), next.start());
-            int end = Math.max(curr.end(), next.end());
-            busyTimeRanges.add(i, TimeRange.fromStartEnd(start, end, false));
-        }
+        int start = Math.min(curr.start(), next.start());
+        int end = Math.max(curr.end(), next.end());
+        busyTimeRanges.add(i, TimeRange.fromStartEnd(start, end, false));
+      }
     }
+    return busyTimeRanges;
+  }
 
+  /* find the free time intervals that is equal to or longer than the required duration */
+  public ArrayList<TimeRange> getFreeTime(ArrayList<TimeRange> busyTimeRanges, long duration) {
     // find the free part of the day and weed out time ranges thats too short
     ArrayList<TimeRange> result = new ArrayList<TimeRange>();
     int startTime = TimeRange.START_OF_DAY; // end time of the last event we examined
     
     for (int k = 0; k < busyTimeRanges.size(); k++) {
-        // case 1: first event of the day starts at the begining of the day
-        if (k ==0 && busyTimeRanges.get(k).start() == TimeRange.START_OF_DAY){
-            startTime = busyTimeRanges.get(k).end();
-            continue;
-        }
-        // case 2:the normal case
-        int endTime = busyTimeRanges.get(k).start();
-        if (endTime - startTime >= duration) {
-            result.add(TimeRange.fromStartEnd(startTime, endTime, false));     
-        } 
+      // case 1: first event of the day starts at the begining of the day
+      if (k ==0 && busyTimeRanges.get(k).start() == TimeRange.START_OF_DAY){
         startTime = busyTimeRanges.get(k).end();
+        continue;
+      }
+      // case 2:the normal case
+      int endTime = busyTimeRanges.get(k).start();
+      if (endTime - startTime >= duration) {
+        result.add(TimeRange.fromStartEnd(startTime, endTime, false));     
+      } 
+      startTime = busyTimeRanges.get(k).end();
     }
 
     // case 3: the final interval we need to consider at the end of the day
     if (TimeRange.END_OF_DAY - startTime >= duration) {
-        result.add(TimeRange.fromStartEnd(startTime, TimeRange.END_OF_DAY, true));
+      result.add(TimeRange.fromStartEnd(startTime, TimeRange.END_OF_DAY, true));
     }
     return result;
   }
@@ -97,5 +134,4 @@ public final class FindMeetingQuery {
       }
       return sb.toString();
   }
-
 }
