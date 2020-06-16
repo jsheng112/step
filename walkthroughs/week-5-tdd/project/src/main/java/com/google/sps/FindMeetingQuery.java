@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -34,24 +36,42 @@ public final class FindMeetingQuery {
 
     //  get a list of individuals we need to consider from request
     Collection<String> attendees = request.getAttendees();
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
     Collection<String> allAttendees = new ArrayList<String>();
     for (String person : attendees) {
         allAttendees.add(person);
     }
-    for (String person : request.getOptionalAttendees()) {
+    for (String person : optionalAttendees) {
         allAttendees.add(person);
     }
 
     // isolate the timeranges from events that pertain to required and optional attendees
     ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>();
     ArrayList<TimeRange> allBusyTimeRanges = new ArrayList<TimeRange>();
+    
+    // maintain a list of events for each optional attendees
+    HashMap<String, HashSet<Event>> optionalAttendeeEvents = new HashMap<>();
     for (Event e : events) {
       for (String a: e.getAttendees()) {
         if (attendees.contains(a)) {
           busyTimeRanges.add(e.getWhen());
+        } else if (optionalAttendees.contains(a)) {
+          if (!optionalAttendeeEvents.containsKey(a)) {
+            HashSet<Event> temp = new HashSet<Event>();
+            temp.add(e);
+            optionalAttendeeEvents.put(a, temp);
+          } else {
+            optionalAttendeeEvents.get(a).add(e);
+          }
         }
+      }
+    }
+
+    for (Event e: events) {
+      for(String a: e.getAttendees()) {
         if (allAttendees.contains(a)) {
           allBusyTimeRanges.add(e.getWhen());
+          break;
         }
       }
     }
@@ -62,24 +82,42 @@ public final class FindMeetingQuery {
     Collections.sort(allBusyTimeRanges, TimeRange.ORDER_BY_START);
 
     busyTimeRanges = getIntersection(busyTimeRanges);
-    allBusyTimeRanges = getIntersection(allBusyTimeRanges);
+    ArrayList<TimeRange> allBusyTimeRangesIntersection = getIntersection(allBusyTimeRanges);
 
     ArrayList<TimeRange> result;
     // if the intersection of all events for both mandatory and optional attendees take up the
     // whole day then just get the free times for the mandatory people
-    if (allBusyTimeRanges.size() == 1 && allBusyTimeRanges.get(0).equals(TimeRange.WHOLE_DAY)) {
+    if (allBusyTimeRangesIntersection.size() == 1 && allBusyTimeRangesIntersection.get(0).equals(TimeRange.WHOLE_DAY)) {
       result = getFreeTime(busyTimeRanges, duration);
     } else {
-      result = getFreeTime(allBusyTimeRanges, duration);
-      if (result.size() == 0) {
-        result = getFreeTime(busyTimeRanges, duration);
+      result = getFreeTime(allBusyTimeRangesIntersection, duration);
+      if (result.size() == 0) { 
+        // solution that optimizes to allow the maximum number of optional attendees to join:
+        ArrayList<TimeRange> cp = new ArrayList<>(allBusyTimeRanges);
+
+        // go through each person and remove all their events until there is enough space
+        for (String entry : optionalAttendeeEvents.keySet()) {
+          for(Event e : optionalAttendeeEvents.get(entry)) {
+            if (cp.contains(e.getWhen())) {
+              cp.remove(e.getWhen());
+            }
+          }
+
+          result = getFreeTime(getIntersection(cp), duration);
+          if (result.size() > 0) {
+            break;
+          }
+        }        
       }
     }
+
     return result;
   }
 
   /* find the intersection of all the non-available time ranges */
-  public ArrayList<TimeRange> getIntersection(ArrayList<TimeRange> busyTimeRanges) {
+  public ArrayList<TimeRange> getIntersection(ArrayList<TimeRange> busyTimeRangesOriginal) {
+    // modifies a copy of the original time ranges
+    ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>(busyTimeRangesOriginal);
     int i = 0;
     while (i< busyTimeRanges.size()) {
       // we are at the end of the list or there is no overlap between the current event and the next event
@@ -125,12 +163,29 @@ public final class FindMeetingQuery {
     return result;
   }
 
-
   // method to help with debugging
   public String printOutArrayList(ArrayList<TimeRange> times) {
       StringBuilder sb = new StringBuilder();
       for (TimeRange t : times) {
           sb.append(t.toString() + "\n");
+      }
+      return sb.toString();
+  }
+
+  // method to help with debugging
+  public String printOutHashSet(HashSet<String> set) {
+      StringBuilder sb = new StringBuilder();
+      for (String s : set) {
+          sb.append(s + "\n");
+      }
+      return sb.toString();
+  }
+
+  // method to help with debugging
+  public String printOutCollection(Collection<String> set) {
+      StringBuilder sb = new StringBuilder();
+      for (String s : set) {
+          sb.append(s + "\n");
       }
       return sb.toString();
   }
