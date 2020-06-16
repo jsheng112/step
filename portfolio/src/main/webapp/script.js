@@ -412,3 +412,44 @@ function init(page) {
         loadPosts();
     }  
 }
+
+/* These labels are for adding markers to
+the map so that when a click is made on the 
+map a red marker pops up with an alphabetical
+label */
+var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var labelIndex = 0;
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  var ptonLatLng = {lat: 40.3431, lng: -74.6551};
+  var googleLatLng = {lat: 40.740895, lng: -74.001974};
+  const map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: {lat: 40.7128, lng: -74.0060}, zoom: 8});
+  var princeton = new google.maps.Marker({
+    position: ptonLatLng,
+    map: map
+  });
+ 
+  const trexInfoWindow =
+      new google.maps.InfoWindow({content: 'Princeton University'});
+  trexInfoWindow.open(map, princeton);
+
+  // This event listener calls addMarker() when the map is clicked.
+  google.maps.event.addListener(map, 'click', function(event) {
+    addMarker(event.latLng, map);
+  });
+}
+
+
+// Adds a marker to the map.
+function addMarker(location, map) {
+  // Add the marker at the clicked location, and add the next-available label
+  // from the array of alphabetical characters.
+  var marker = new google.maps.Marker({
+    position: location,
+    label: labels[labelIndex++ % labels.length],
+    map: map
+  });
+}
