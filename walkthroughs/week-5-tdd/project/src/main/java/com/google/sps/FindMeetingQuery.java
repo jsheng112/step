@@ -97,33 +97,10 @@ public final class FindMeetingQuery {
             return new ArrayList<>();
         }
 
-        // solution that optimizes to allow the maximum number of optional attendees to join:
-
-        // first find the free time range that conflicts with the least number of employees 
-        // (this is the time range that we will work to free up)
         TimeRange needToBeFree = findOptimalTime(optionalAttendees, optionalBusyEvents, unChangeableTimes, optionalAttendeeEvents);
-        ArrayList<TimeRange> cp = new ArrayList<>(allBusyTimeRanges);
 
-        // go through each optional person who has a meeting in this time range we are trying to free: 
-        // check whether there exist an event that conflicts with the time range
-        // that we want to free up. If so remove all their events. Repeat until there is enough space
-        for (String entry : optionalAttendeeEvents.keySet()) {
-          boolean removeAll = false;
-          for(Event e : optionalAttendeeEvents.get(entry)) {
-            if (removeAll) {
-              cp.remove(e.getWhen());
-            } else if (e.getWhen().overlaps(needToBeFree)) {
-              cp.remove(e.getWhen());
-              removeAll = true;
-            }
-          }
-
-         // check whether up to this point we have created at least one time gap 
-          result = getFreeTime(getIntersection(cp), duration);
-          if (result.size() > 0) {
-            break;
-          }
-        }        
+        // free up this timerange we found;
+        result = removeTimeConflicts(allBusyTimeRanges, optionalAttendeeEvents, needToBeFree, duration);
       }
     }
 
@@ -179,7 +156,7 @@ public final class FindMeetingQuery {
     return result;
   }
 
-  /* finds and reurns the free time range that overlaps with the least number of optional attendees.
+  /* finds and returns the free time range that conflicts with the least number of optional attendees.
   It also removes any entries from the hashmap of optional attendees where the attendee does not 
   have a conflict in the current time range we are freeing */
   public TimeRange findOptimalTime(Collection<String> optionalAttendees, ArrayList<Event> optionalEvents, ArrayList<TimeRange> result, HashMap<String, HashSet<Event>> optionalAttendeeEvents) {
@@ -222,6 +199,32 @@ public final class FindMeetingQuery {
     }
     
     return result.get(minIndex);
+  }
+
+  public ArrayList<TimeRange> removeTimeConflicts(ArrayList<TimeRange> allBusyTimeRanges, HashMap<String, HashSet<Event>> optionalAttendeeEvents, TimeRange needToBeFree, long duration) {
+    ArrayList<TimeRange> cp = new ArrayList<>(allBusyTimeRanges);
+    ArrayList<TimeRange> result = null; 
+    // go through each optional person who has a meeting in this time range we are trying to free: 
+    // check whether there exist an event that conflicts with the time range
+    // that we want to free up. If so remove all their events. Repeat until there is enough space
+    for (String entry : optionalAttendeeEvents.keySet()) {
+      boolean removeAll = false;
+      for(Event e : optionalAttendeeEvents.get(entry)) {
+        if (removeAll) {
+          cp.remove(e.getWhen());
+        } else if (e.getWhen().overlaps(needToBeFree)) {
+          cp.remove(e.getWhen());
+          removeAll = true;
+        }
+      }
+
+      // check whether up to this point we have created at least one time gap 
+      result = getFreeTime(getIntersection(cp), duration);
+      if (result.size() > 0) {
+        break;
+      }
+    }
+    return result;
   }
 
   // method to help with debugging
