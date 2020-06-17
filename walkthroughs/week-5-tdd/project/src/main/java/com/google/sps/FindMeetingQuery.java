@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -47,6 +48,7 @@ public final class FindMeetingQuery {
 
     // isolate the timeranges from events that pertain to required and optional attendees
     ArrayList<TimeRange> busyTimeRanges = new ArrayList<TimeRange>();
+    ArrayList<Event> optionalBusyEvents = new ArrayList<Event>();
     ArrayList<TimeRange> allBusyTimeRanges = new ArrayList<TimeRange>();
     
     // maintain a list of events for each optional attendees
@@ -56,6 +58,7 @@ public final class FindMeetingQuery {
         if (attendees.contains(a)) {
           busyTimeRanges.add(e.getWhen());
         } else if (optionalAttendees.contains(a)) {
+          optionalBusyEvents.add(e);
           if (!optionalAttendeeEvents.containsKey(a)) {
             HashSet<Event> temp = new HashSet<Event>();
             temp.add(e);
@@ -64,14 +67,8 @@ public final class FindMeetingQuery {
             optionalAttendeeEvents.get(a).add(e);
           }
         }
-      }
-    }
-
-    for (Event e: events) {
-      for(String a: e.getAttendees()) {
         if (allAttendees.contains(a)) {
           allBusyTimeRanges.add(e.getWhen());
-          break;
         }
       }
     }
@@ -92,14 +89,31 @@ public final class FindMeetingQuery {
     } else {
       result = getFreeTime(allBusyTimeRangesIntersection, duration);
       if (result.size() == 0) { 
+        ArrayList<TimeRange> unChangeableTimes = getFreeTime(busyTimeRanges, duration);
+
+        // corner case
+        if (unChangeableTimes.size() == 0) {
+            return new ArrayList<>();
+        }
+
         // solution that optimizes to allow the maximum number of optional attendees to join:
+
+        // first find the free time range that conflicts with the least number of employees 
+        // (this is the time range that we will work to free up)
+        TimeRange needToBeFree = findOptimalTime(optionalAttendees, optionalBusyEvents, unChangeableTimes, optionalAttendeeEvents);
         ArrayList<TimeRange> cp = new ArrayList<>(allBusyTimeRanges);
 
-        // go through each person and remove all their events until there is enough space
+        // go through each optional person who has a meeting in this time range we are trying to free: 
+        // check whether there exist an event that conflicts with the time range
+        // that we want to free up. If so remove all their events. Repeat until there is enough space
         for (String entry : optionalAttendeeEvents.keySet()) {
+          boolean removeAll = false;
           for(Event e : optionalAttendeeEvents.get(entry)) {
-            if (cp.contains(e.getWhen())) {
+            if (removeAll) {
               cp.remove(e.getWhen());
+            } else if (e.getWhen().overlaps(needToBeFree)) {
+              cp.remove(e.getWhen());
+              removeAll = true;
             }
           }
 
@@ -161,6 +175,51 @@ public final class FindMeetingQuery {
       result.add(TimeRange.fromStartEnd(startTime, TimeRange.END_OF_DAY, true));
     }
     return result;
+  }
+
+  /* finds and reurns the free time range that overlaps with the least number of optional attendees.
+  It also removes any entries from the hashmap of optional attendees where the attendee does not 
+  have a conflict in the current time range we are freeing */
+  public TimeRange findOptimalTime(Collection<String> optionalAttendees, ArrayList<Event> optionalEvents, ArrayList<TimeRange> result, HashMap<String, HashSet<Event>> optionalAttendeeEvents) {
+    // result array list is the list where we did not consider optional people
+    // iterate over all TimeRanges in result and calculate the number of attendee overlaps each has
+    // find the one with the minimum # of overlaps
+    int min = Integer.MAX_VALUE;
+    int minIndex = 0;
+    HashSet<String> namesToBeRemoved = null;
+    for (int i = 0; i < result.size(); i++) {
+      TimeRange time = result.get(i);
+      // maintain a hashset of optional attendees 
+      // this is to avoid double counting certain events that belong to overbooked attendees
+      HashSet<String> names = new HashSet<String>();
+      for (Event optional : optionalEvents) {
+        if (optional.getWhen().overlaps(time)) {
+          for (String a : optional.getAttendees()) {
+            if (!names.contains(a) && optionalAttendees.contains(a)) {
+              names.add(a);
+            }
+          }
+        }
+      }
+      int count = names.size();
+      if (min > count) {
+        minIndex = i;
+        min = count;
+        namesToBeRemoved = names;
+      }
+    }
+
+    // remove from the map any optional attendees that can definitely make it
+    Iterator<Map.Entry<String, HashSet<Event>>> iterate = optionalAttendeeEvents.entrySet().iterator();
+    while (iterate.hasNext()) {
+      Map.Entry<String, HashSet<Event>> e = iterate.next();
+      String key = e.getKey();
+      if (!namesToBeRemoved.contains(key)) {
+          iterate.remove();
+      }
+    }
+    
+    return result.get(minIndex);
   }
 
   // method to help with debugging
