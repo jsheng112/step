@@ -59,6 +59,7 @@ public final class FindMeetingQuery {
           busyTimeRanges.add(e.getWhen());
         } else if (optionalAttendees.contains(a)) {
           optionalBusyEvents.add(e);
+          // builds the hashset that contains each optional attendee and their events
           if (!optionalAttendeeEvents.containsKey(a)) {
             HashSet<Event> temp = new HashSet<Event>();
             temp.add(e);
@@ -117,6 +118,7 @@ public final class FindMeetingQuery {
             }
           }
 
+         // check whether up to this point we have created at least one time gap 
           result = getFreeTime(getIntersection(cp), duration);
           if (result.size() > 0) {
             break;
